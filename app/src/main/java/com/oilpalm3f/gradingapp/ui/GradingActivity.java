@@ -386,7 +386,6 @@ public class GradingActivity extends AppCompatActivity {
 
         return true;
     }
-
     @SuppressLint("MissingSuperCall")
     @Override
     public void onActivityResult ( int requestCode, int resultCode, Intent data){
@@ -423,6 +422,8 @@ public class GradingActivity extends AppCompatActivity {
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
 
+
+        
         /* Get the size of the ImageView */
         int targetW = slipImage.getWidth();
         int targetH = slipImage.getHeight();
