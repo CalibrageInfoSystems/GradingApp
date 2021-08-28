@@ -66,7 +66,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Mill Code" />
+                    android:text="CCCode" />
 
                 <TextView
                     android:id="@+id/millcode"
@@ -89,7 +89,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Type" />
+                    android:text="FruitType" />
 
                 <TextView
                     android:id="@+id/type"
@@ -115,6 +115,28 @@
 
                 <TextView
                     android:id="@+id/grossweight"
+                    style="@style/header_h1_text_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top_layout"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/header_h1_text_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TokenDate" />
+
+                <TextView
+                    android:id="@+id/tokendate"
                     style="@style/header_h1_text_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

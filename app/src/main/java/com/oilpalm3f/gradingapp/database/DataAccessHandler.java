@@ -13,6 +13,7 @@ import android.util.Pair;
 import com.oilpalm3f.gradingapp.FaLogTracking.LocationTracker;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
+import com.oilpalm3f.gradingapp.dbmodels.UserDetails;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -564,25 +565,25 @@ public class DataAccessHandler <T> {
         return plotCodes;
     }
 
-//    public String getCountValue(String query) {
-////        mDatabase = palm3FoilDatabase.getWritableDatabase();
-//        Cursor mOprQuery = null;
-//        try {
-//            mOprQuery = mDatabase.rawQuery(query, null);
-//            if (mOprQuery != null && mOprQuery.moveToFirst()) {
-//                return mOprQuery.getString(0);
-//            }
-//
-//            return null;
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            mOprQuery.close();
-//            closeDataBase();
-//        }
-//        return "";
-//    }
+    public String getCountValue(String query) {
+//        mDatabase = palm3FoilDatabase.getWritableDatabase();
+        Cursor mOprQuery = null;
+        try {
+            mOprQuery = mDatabase.rawQuery(query, null);
+            if (mOprQuery != null && mOprQuery.moveToFirst()) {
+                return mOprQuery.getString(0);
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mOprQuery.close();
+            closeDataBase();
+        }
+        return "";
+    }
 
     public String getdeleteDuplicateValue(String query) {
 //        mDatabase = palm3FoilDatabase.getWritableDatabase();
@@ -836,6 +837,38 @@ public class DataAccessHandler <T> {
             return "";
             // TODO: handle exception
         }
+    }
+
+    public T getUserDetails(final String query, int dataReturnType) {
+        UserDetails userDetails = null;
+        Cursor cursor = null;
+        List userDataList = new ArrayList();
+        Log.v(LOG_TAG, "@@@ user details query " + query);
+        try {
+            cursor = mDatabase.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    userDetails = new UserDetails();
+                    userDetails.setUserId(cursor.getString(0));
+                    userDetails.setUserName(cursor.getString(1));
+                    userDetails.setPassword(cursor.getString(2));
+                    userDetails.setRoleId(cursor.getInt(3));
+                    userDetails.setManagerId(cursor.getInt(4));
+                    userDetails.setId(cursor.getString(5));
+                    userDetails.setFirstName(cursor.getString(6));
+                    userDetails.setTabName(cursor.getString(7));
+                    userDetails.setUserCode(cursor.getString(8));
+//                    userDetails.setTabletId(cursor.getInt(5));
+//                    userDetails.setUserVillageId(cursor.getString(6));
+                    if (dataReturnType == 1) {
+                        userDataList.add(userDetails);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "@@@ getting user details " + e.getMessage());
+        }
+        return (T) ((dataReturnType == 0) ? userDetails : userDataList);
     }
 
 }

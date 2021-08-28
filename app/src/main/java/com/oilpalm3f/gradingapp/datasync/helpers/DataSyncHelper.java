@@ -62,88 +62,88 @@ public class DataSyncHelper {
     public static int PlotResetCount;
 
 
-//    public static synchronized void performMasterSync(final Context context, final boolean firstTimeInsertFinished, final ApplicationThread.OnComplete onComplete) {
-//        IMEINUMBER = CommonUtils.getIMEInumber(context);
-//        LinkedHashMap<String, String> syncDataMap = new LinkedHashMap<>();
-//        syncDataMap.put("LastUpdatedDate", "");
-//        syncDataMap.put("IMEINumber", IMEINUMBER);
-//        countCheck = 0;
-//        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
-//        ProgressBar.showProgressBar(context, "Making data ready for you...");
-//        CloudDataHandler.getMasterData(Config.live_url + Config.masterSyncUrl, syncDataMap, new ApplicationThread.OnComplete<HashMap<String, List>>() {
-//            @Override
-//            public void execute(boolean success, final HashMap<String, List> masterData, String msg) {
-//                if (success) {
-//                    if (masterData != null && masterData.size() > 0) {
-//                        //Log.v(LOG_TAG, "@@@ Master sync is success and data size is " + masterData.size());
-//
-//                        final Set<String> tableNames = masterData.keySet();
-//                        masterData.remove("CcRate");
-//                        for (final String tableName : tableNames) {
-//                           // Log.v(LOG_TAG, "@@@ Delete Query " + String.format(Queries.getInstance().deleteTableData(), tableName));
-//                            ApplicationThread.dbPost("Master Data Sync..", "master data", new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    countCheck++;
-//                                    if (!firstTimeInsertFinished) {
-//                                        dataAccessHandler.deleteRow(tableName, null, null, false, new ApplicationThread.OnComplete<String>() {
-//                                            @Override
-//                                            public void execute(boolean success, String result, String msg) {
-//                                                if (success) {
-//                                                    dataAccessHandler.insertData(true, tableName, masterData.get(tableName), new ApplicationThread.OnComplete<String>() {
-//                                                        @Override
-//                                                        public void execute(boolean success, String result, String msg) {
-//                                                            if (success) {
-//                                                               //Log.v(LOG_TAG, "@@@ sync success for " + tableName);
-//                                                            } else {
-////                                                                Log.v(LOG_TAG, "@@@ check 1 " + masterData.size() + "...pos " + countCheck);
-////                                                                Log.v(LOG_TAG, "@@@ sync failed for " + tableName + " message " + msg);
-//                                                            }
-//                                                            if (countCheck == masterData.size()) {
-//                                                                //Log.v(LOG_TAG, "@@@ Done with master sync " + countCheck);
-//                                                                ProgressBar.hideProgressBar();
-//                                                                onComplete.execute(true, null, "Sync is success");
-//                                                            }
-//                                                        }
-//                                                    });
-//                                                } else {
-//                                                  //  Log.v(LOG_TAG, "@@@ Master table deletion failed for " + tableName);
-//                                                }
-//                                            }
-//                                        });
-//                                    } else {
-//                                        dataAccessHandler.insertData(tableName, masterData.get(tableName), new ApplicationThread.OnComplete<String>() {
-//                                            @Override
-//                                            public void execute(boolean success, String result, String msg) {
-//                                                if (success) {
-//                                                   // Log.v(LOG_TAG, "@@@ sync success for " + tableName);
-//                                                } else {
-//                                                   // Log.v(LOG_TAG, "@@@ check 2 " + masterData.size() + "...pos " + countCheck);
-//                                                    //Log.v(LOG_TAG, "@@@ sync failed for " + tableName + " message " + msg);
-//                                                }
-//                                                if (countCheck == masterData.size()) {
-//                                                    //Log.v(LOG_TAG, "@@@ Done with master sync " + countCheck);
-//                                                    ProgressBar.hideProgressBar();
-//                                                    onComplete.execute(true, null, "Sync is success");
-//                                                }
-//                                            }
-//                                        });
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    } else {
-//                        ProgressBar.hideProgressBar();
-//                        Log.v(LOG_TAG, "@@@ Sync is up-to-date");
-//                        onComplete.execute(true, null, "Sync is up-to-date");
-//                    }
-//                } else {
-//                    ProgressBar.hideProgressBar();
-//                    onComplete.execute(false, null, "Master sync failed. Please try again");
-//                }
-//            }
-//        });
-//    }
+    public static synchronized void performMasterSync(final Context context, final boolean firstTimeInsertFinished, final ApplicationThread.OnComplete onComplete) {
+        IMEINUMBER = CommonUtils.getIMEInumber(context);
+        LinkedHashMap<String, String> syncDataMap = new LinkedHashMap<>();
+        syncDataMap.put("LastUpdatedDate", "");
+        syncDataMap.put("IMEINumber", IMEINUMBER);
+        countCheck = 0;
+        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
+        ProgressBar.showProgressBar(context, "Making data ready for you...");
+        CloudDataHandler.getMasterData(Config.live_url + Config.masterSyncUrl, syncDataMap, new ApplicationThread.OnComplete<HashMap<String, List>>() {
+            @Override
+            public void execute(boolean success, final HashMap<String, List> masterData, String msg) {
+                if (success) {
+                    if (masterData != null && masterData.size() > 0) {
+                        //Log.v(LOG_TAG, "@@@ Master sync is success and data size is " + masterData.size());
+
+                        final Set<String> tableNames = masterData.keySet();
+                        masterData.remove("CcRate");
+                        for (final String tableName : tableNames) {
+                           // Log.v(LOG_TAG, "@@@ Delete Query " + String.format(Queries.getInstance().deleteTableData(), tableName));
+                            ApplicationThread.dbPost("Master Data Sync..", "master data", new Runnable() {
+                                @Override
+                                public void run() {
+                                    countCheck++;
+                                    if (!firstTimeInsertFinished) {
+                                        dataAccessHandler.deleteRow(tableName, null, null, false, new ApplicationThread.OnComplete<String>() {
+                                            @Override
+                                            public void execute(boolean success, String result, String msg) {
+                                                if (success) {
+                                                    dataAccessHandler.insertData(true, tableName, masterData.get(tableName), new ApplicationThread.OnComplete<String>() {
+                                                        @Override
+                                                        public void execute(boolean success, String result, String msg) {
+                                                            if (success) {
+                                                               //Log.v(LOG_TAG, "@@@ sync success for " + tableName);
+                                                            } else {
+//                                                                Log.v(LOG_TAG, "@@@ check 1 " + masterData.size() + "...pos " + countCheck);
+//                                                                Log.v(LOG_TAG, "@@@ sync failed for " + tableName + " message " + msg);
+                                                            }
+                                                            if (countCheck == masterData.size()) {
+                                                                //Log.v(LOG_TAG, "@@@ Done with master sync " + countCheck);
+                                                                ProgressBar.hideProgressBar();
+                                                                onComplete.execute(true, null, "Sync is success");
+                                                            }
+                                                        }
+                                                    });
+                                                } else {
+                                                  //  Log.v(LOG_TAG, "@@@ Master table deletion failed for " + tableName);
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        dataAccessHandler.insertData(tableName, masterData.get(tableName), new ApplicationThread.OnComplete<String>() {
+                                            @Override
+                                            public void execute(boolean success, String result, String msg) {
+                                                if (success) {
+                                                   // Log.v(LOG_TAG, "@@@ sync success for " + tableName);
+                                                } else {
+                                                   // Log.v(LOG_TAG, "@@@ check 2 " + masterData.size() + "...pos " + countCheck);
+                                                    //Log.v(LOG_TAG, "@@@ sync failed for " + tableName + " message " + msg);
+                                                }
+                                                if (countCheck == masterData.size()) {
+                                                    //Log.v(LOG_TAG, "@@@ Done with master sync " + countCheck);
+                                                    ProgressBar.hideProgressBar();
+                                                    onComplete.execute(true, null, "Sync is success");
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        ProgressBar.hideProgressBar();
+                        Log.v(LOG_TAG, "@@@ Sync is up-to-date");
+                        onComplete.execute(true, null, "Sync is up-to-date");
+                    }
+                } else {
+                    ProgressBar.hideProgressBar();
+                    onComplete.execute(false, null, "Master sync failed. Please try again");
+                }
+            }
+        });
+    }
 
 //    public static synchronized void performRefreshTransactionsSync(final Context context, final ApplicationThread.OnComplete onComplete) {
 //        countCheck = 0;

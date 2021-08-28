@@ -17,11 +17,15 @@ import android.view.animation.AnimationUtils;
 
 import com.oilpalm3f.gradingapp.MainActivity;
 import com.oilpalm3f.gradingapp.R;
+import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.Palm3FoilDatabase;
 import com.oilpalm3f.gradingapp.database.Queries;
+import com.oilpalm3f.gradingapp.datasync.helpers.DataSyncHelper;
+import com.oilpalm3f.gradingapp.helper.PrefUtil;
+import com.oilpalm3f.gradingapp.uihelper.ProgressBar;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
 public class SplashScreen extends AppCompatActivity {
@@ -64,6 +68,7 @@ public class SplashScreen extends AppCompatActivity {
             } catch (Exception e) {
                 e.getMessage();
             }
+            startMasterSync();
         }
 
 
@@ -80,23 +85,54 @@ public class SplashScreen extends AppCompatActivity {
                         palm3FoilDatabase = Palm3FoilDatabase.getPalm3FoilDatabase(this);
                         palm3FoilDatabase.createDataBase();
                         dbUpgradeCall();
-                        setViews();
                     } catch (Exception e) {
                         Log.e(LOG_TAG, "@@@ Error while getting master data " + e.getMessage());
                     }
+                    startMasterSync();
                 }
                 break;
+        }
+    }
+
+    public void startMasterSync() {
+
+        if (CommonUtils.isNetworkAvailable(this) && !sharedPreferences.getBoolean(CommonConstants.IS_MASTER_SYNC_SUCCESS,false)) {
+            DataSyncHelper.performMasterSync(this, PrefUtil.getBool(this, CommonConstants.IS_MASTER_SYNC_SUCCESS), new ApplicationThread.OnComplete() {
+                @Override
+                public void execute(boolean success, Object result, String msg) {
+                    ProgressBar.hideProgressBar();
+                    if (success) {
+                        UiUtils.showCustomToastMessage("Master Sync Success", SplashScreen.this, 0);
+                        sharedPreferences.edit().putBoolean(CommonConstants.IS_MASTER_SYNC_SUCCESS, true).apply();
+                        startActivity(new Intent(SplashScreen.this, MainLoginScreen.class));
+                        finish();
+                    } else {
+                        Log.v(LOG_TAG, "@@@ Master sync failed " + msg);
+                        ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
+                            @Override
+                            public void run() {
+                                UiUtils.showCustomToastMessage("Data syncing failed", SplashScreen.this, 1);
+                                startActivity(new Intent(SplashScreen.this, MainLoginScreen.class));
+                                finish();
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            startActivity(new Intent(SplashScreen.this, MainLoginScreen.class));
+            finish();
         }
     }
 
 
     public void dbUpgradeCall() {
         DataAccessHandler dataAccessHandler = new DataAccessHandler(SplashScreen.this, false);
-//        String count = dataAccessHandler.getCountValue(Queries.getInstance().UpgradeCount());
-//        if (TextUtils.isEmpty(count) || Integer.parseInt(count) == 0) {
-//            SharedPreferences sharedPreferences = getSharedPreferences("appprefs", MODE_PRIVATE);
-//            sharedPreferences.edit().putBoolean(CommonConstants.IS_FRESH_INSTALL, true).apply();
-//        }
+        String count = dataAccessHandler.getCountValue(Queries.getInstance().UpgradeCount());
+        if (TextUtils.isEmpty(count) || Integer.parseInt(count) == 0) {
+            SharedPreferences sharedPreferences = getSharedPreferences("appprefs", MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(CommonConstants.IS_FRESH_INSTALL, true).apply();
+        }
     }
 
     private void setViews() {
