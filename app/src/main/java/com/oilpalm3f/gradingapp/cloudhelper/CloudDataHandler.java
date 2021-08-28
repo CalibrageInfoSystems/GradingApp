@@ -264,14 +264,17 @@ public class CloudDataHandler {
                                 android.util.Log.v(LOG_TAG, "@@@@ Tables Size " + keysList.size());
                                 LinkedHashMap<String, List> masterDataMap = new LinkedHashMap<>();
                                 for (String tableName : keysList) {
-                                    if (!tableName.equalsIgnoreCase("KnowledgeZone") && !tableName.equalsIgnoreCase("KRA")) {
+                                    //if (!tableName.equalsIgnoreCase("KnowledgeZone") && !tableName.equalsIgnoreCase("KRA")) {
                                         masterDataMap.put(tableName, CommonUtils.toList(parentMasterDataObject.getJSONArray(tableName)));
-                                    }
+                                   //}
                                 }
+
+                                onComplete.execute(success, masterDataMap, msg);
 
                                 Log.v(LOG_TAG, "@@@@ Tables Data " + masterDataMap.size());
 
-                                getKraData(onComplete, masterDataMap);
+                                //getKraData(onComplete, masterDataMap);
+
 
 
                             } catch (Exception e) {

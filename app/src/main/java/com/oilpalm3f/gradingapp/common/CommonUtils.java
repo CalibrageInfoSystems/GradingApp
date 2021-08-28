@@ -844,7 +844,6 @@ public class CommonUtils {
         }
 
         return deviceId;
-        // return "358525086042938";  //d04766fdfdd6b987 //tab 022 //Stamp Id
         //return "351558073011845";  //d04766fdfdd6b987 //tab 022 //Stamp Id
         //return "358525086194531";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";

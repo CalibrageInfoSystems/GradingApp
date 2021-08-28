@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
+import com.oilpalm3f.gradingapp.common.CommonConstants;
+import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.common.InputFilterMinMax;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
@@ -31,7 +33,7 @@ import java.util.List;
 public class GradingActivity extends AppCompatActivity {
 
     String qrvalue;
-    public TextView tokenNumber, millcode, type, grossweight;
+    public TextView tokenNumber, millcode, type, grossweight,tokendate;
 
     EditText unripen, underripe, ripen, overripe, diseased,
             emptybunches, longstalk, mediumstalk, shortstalk, optimum,loosefruitweight, rejectedBunches,gradingdoneby;
@@ -56,6 +58,7 @@ public class GradingActivity extends AppCompatActivity {
         millcode = findViewById(R.id.millcode);
         type = findViewById(R.id.type);
         grossweight = findViewById(R.id.grossweight);
+        tokendate = findViewById(R.id.tokendate);
 
         unripen = findViewById(R.id.unripen);
         underripe = findViewById(R.id.underripe);
@@ -98,11 +101,13 @@ public class GradingActivity extends AppCompatActivity {
         Log.d("String2", splitString[1] + "");
         Log.d("String3", splitString[2] + "");
         Log.d("String4", splitString[3] + "");
+        Log.d("String5", splitString[4] + "");
 
         tokenNumber.setText(splitString[0] + "");
         millcode.setText(splitString[1] + "");
         type.setText(splitString[2] + "");
         grossweight.setText(splitString[3] + "");
+        tokendate.setText(splitString[4] + "");
 
         String[] isloosefruitavailableArray = getResources().getStringArray(R.array.yesOrNo_values);
         List<String> isloosefruitavailableList = Arrays.asList(isloosefruitavailableArray);
@@ -138,10 +143,11 @@ public class GradingActivity extends AppCompatActivity {
                     List<LinkedHashMap> details = new ArrayList<>();
                     LinkedHashMap map = new LinkedHashMap();
 
-                    map.put("Token", splitString[0] + "");
-                    map.put("MillCode", splitString[1] + "");
-                    map.put("Type", splitString[2] + "");
+                    map.put("TokenNumber", splitString[0] + "");
+                    map.put("CCCode", splitString[1] + "");
+                    map.put("FruitType", splitString[2] + "");
                     map.put("GrossWeight", splitString[3] + "");
+                    map.put("TokenDate", splitString[4] + "");
 
                     map.put("UnRipen", Integer.parseInt(unripen.getText().toString()));
                     map.put("UnderRipe", Integer.parseInt(underripe.getText().toString()));
@@ -170,11 +176,13 @@ public class GradingActivity extends AppCompatActivity {
                     }
 
                     map.put("RejectedBunches",rejectedBunches.getText().toString());
-                    map.put("Gradingdoneby", gradingdoneby.getText().toString());
+                    map.put("GraderName", gradingdoneby.getText().toString());
+                    map.put("CreatedByUserId", CommonConstants.USER_ID);
+                    map.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
 
                     details.add(map);
 
-                    dataAccessHandler.saveData("Grading", details, new ApplicationThread.OnComplete<String>() {
+                    dataAccessHandler.saveData("FFBGrading", details, new ApplicationThread.OnComplete<String>() {
                         @Override
                         public void execute(boolean success, String result, String msg) {
 

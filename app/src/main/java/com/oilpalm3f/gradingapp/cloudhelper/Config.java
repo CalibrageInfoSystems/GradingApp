@@ -24,7 +24,7 @@ public class Config {
         }
     }
 
-    public static final String masterSyncUrl = "/SyncMasters/Sync";
+    public static final String masterSyncUrl = "/SyncMasters/SyncFFBGradingMasters";
 
     public static final String transactionSyncURL = "/SyncTransactions/SyncTransactions";
     public static final String locationTrackingURL = "/LocationTracker/SaveOfflineLocations";

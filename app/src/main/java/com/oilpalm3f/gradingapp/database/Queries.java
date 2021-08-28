@@ -1256,10 +1256,10 @@ public class Queries {
         return "select * from ComplaintRepository where ComplaintCode = '" + complaintCode + "'" + " and FileExtension ='.mp3'";
     }
 
-//    public String UpgradeCount() {
-//        //number of Users
-//        return "select count(*) from UserInfo";
-//    }
+    public String UpgradeCount() {
+        //number of Users
+        return "select count(*) from UserInfo";
+    }
 
     public String getComplaintToDisplay(boolean isPlot, String plotcode) {
         String wherecondition;
