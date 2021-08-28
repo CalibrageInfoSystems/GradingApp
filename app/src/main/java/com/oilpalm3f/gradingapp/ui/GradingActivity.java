@@ -2,8 +2,19 @@ package com.oilpalm3f.gradingapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,25 +23,35 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.oilpalm3f.gradingapp.BuildConfig;
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.common.InputFilterMinMax;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
+import com.oilpalm3f.gradingapp.utils.ImageUtility;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.oilpalm3f.gradingapp.common.CommonUtils.REQUEST_CAM_PERMISSIONS;
+
 public class GradingActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = GradingActivity.class.getName();
 
     String qrvalue;
     public TextView tokenNumber, millcode, type, grossweight,tokendate;
@@ -40,8 +61,18 @@ public class GradingActivity extends AppCompatActivity {
     Button submit;
     Spinner isloosefruitavailable_spinner;
     LinearLayout loosefruitweightLL;
+    
     private DataAccessHandler dataAccessHandler;
-
+    private ImageView slipImage, slipIcon;
+    private static final int CAMERA_REQUEST = 1888;
+    private String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    public static  String mCurrentPhotoPath;
+    private  File finalFile;
+    private Bitmap currentBitmap = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +104,8 @@ public class GradingActivity extends AppCompatActivity {
         loosefruitweight = findViewById(R.id.loosefruitweight);
         rejectedBunches = findViewById(R.id.rejectedbunches);
         gradingdoneby = findViewById(R.id.gradingdoneby);
-
+        slipImage = (ImageView) findViewById(R.id.slip_image);
+        slipIcon = (ImageView) findViewById(R.id.slip_icon);
         isloosefruitavailable_spinner = findViewById(R.id.isloosefruitavailable_spinner);
         loosefruitweightLL = findViewById(R.id.loosefruitweightLL);
         submit = findViewById(R.id.gradingsubmit);
@@ -95,8 +127,8 @@ public class GradingActivity extends AppCompatActivity {
             Log.d("QR Code Value is", qrvalue + "");
         }
 
-        String[] splitString = qrvalue.split("/");
-
+      String[] splitString = qrvalue.split("/");
+//
         Log.d("String1", splitString[0] + "");
         Log.d("String2", splitString[1] + "");
         Log.d("String3", splitString[2] + "");
@@ -131,6 +163,22 @@ public class GradingActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+        slipImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (!CommonUtils.isPermissionAllowed(GradingActivity.this, Manifest.permission.CAMERA))) {
+               Log.v(LOG_TAG, "Location Permissions Not Granted");
+                    ActivityCompat.requestPermissions(
+                            GradingActivity.this,
+                            PERMISSIONS_STORAGE,
+                            REQUEST_CAM_PERMISSIONS
+                    );
+                } else {
+
+                    dispatchTakePictureIntent(CAMERA_REQUEST);
+                }
             }
         });
 
@@ -207,6 +255,59 @@ public class GradingActivity extends AppCompatActivity {
 
     }
 
+    private void dispatchTakePictureIntent(int actionCode) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        switch(actionCode) {
+            case CAMERA_REQUEST:
+                File f = null;
+                mCurrentPhotoPath = null;
+                try {
+                    f = setUpPhotoFile();
+                    mCurrentPhotoPath = f.getAbsolutePath();
+//                    FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+//                            BuildConfig.APPLICATION_ID + ".provider", file);
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            f);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    f = null;
+                    mCurrentPhotoPath = null;
+                }
+                break;
+
+            default:
+                break;
+        }
+        startActivityForResult(takePictureIntent, actionCode);
+    }
+
+    private File setUpPhotoFile() throws IOException {
+
+        File f = createImageFile();
+        mCurrentPhotoPath = f.getAbsolutePath();
+
+        Log.e("===========>",mCurrentPhotoPath);
+
+        return f;
+    }
+
+    private File createImageFile() throws IOException {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File rootDirectory = new File(root + "/3F_GradingPictures");
+        File pictureDirectory = new File(root + "/3F_GradingPictures/" + "GradingPhotos");
+
+        if (!rootDirectory.exists()) {
+            rootDirectory.mkdirs();
+        }
+
+        if (!pictureDirectory.exists()) {
+            pictureDirectory.mkdirs();
+        }
+        finalFile = new File(pictureDirectory, Calendar.getInstance().getTimeInMillis() + CommonConstants.JPEG_FILE_SUFFIX);
+        return finalFile;
+    }
     public boolean validate() {
 
         if (TextUtils.isEmpty(unripen.getText().toString())) {
@@ -284,5 +385,83 @@ public class GradingActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onActivityResult ( int requestCode, int resultCode, Intent data){
+        switch (requestCode) {
+            case CAMERA_REQUEST: {
+                if (resultCode == RESULT_OK) {
+                    try {
+//                        UiUtils.decodeFile(mCurrentPhotoPath,finalFile);
+                        handleBigCameraPhoto();
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+                }
+                break;
+            }
+        }
+    }
+    private void handleBigCameraPhoto () {
+
+        if (mCurrentPhotoPath != null) {
+            setPic();
+            galleryAddPic();
+//            mCurrentPhotoPath = null;
+        }
+
+    }
+
+    private void setPic()
+    {
+
+        /* There isn't enough memory to open up more than a couple camera photos */
+        /* So pre-scale the target bitmap into which the file is decoded */
+
+        /* Get the size of the ImageView */
+        int targetW = slipImage.getWidth();
+        int targetH = slipImage.getHeight();
+
+        /* Get the size of the image */
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        /* Figure out which way needs to be reduced less */
+        int scaleFactor = 1;
+        if ((targetW > 0) || (targetH > 0)) {
+            scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        }
+
+        /* Set bitmap options to scale the image decode target */
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        /* Decode the JPEG file into a Bitmap */
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+        bitmap = ImageUtility.rotatePicture(90, bitmap);
+
+        currentBitmap = bitmap;
+        slipImage.setImageBitmap(bitmap);
+        slipImage.setVisibility(View.VISIBLE);
+        slipIcon.setVisibility(View.GONE);
+        slipImage.invalidate();
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 }
