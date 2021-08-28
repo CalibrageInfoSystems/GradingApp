@@ -23,7 +23,7 @@
 <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <LinearLayout
-        android:id="@+id/refreshRel1"
+        android:id="@+id/synclyt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"

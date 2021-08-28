@@ -13,6 +13,7 @@ import android.util.Pair;
 import com.oilpalm3f.gradingapp.FaLogTracking.LocationTracker;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
+import com.oilpalm3f.gradingapp.dbmodels.GradingFileRepository;
 import com.oilpalm3f.gradingapp.dbmodels.UserDetails;
 
 import org.apache.commons.lang3.StringUtils;
@@ -870,5 +871,40 @@ public class DataAccessHandler <T> {
         }
         return (T) ((dataReturnType == 0) ? userDetails : userDataList);
     }
+
+    public T getGradingRepoDetails(final String query, final int type) {
+        List<GradingFileRepository> gradingrepolist = new ArrayList<>();
+        GradingFileRepository mgradingrepository = null;
+        Cursor cursor = null;
+        Log.v(LOG_TAG, "@@@ GradingRepo details query " + query);
+        try {
+            cursor = mDatabase.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    mgradingrepository = new GradingFileRepository();
+                    mgradingrepository.setTokenNumber(cursor.getString(1));
+                    mgradingrepository.setCCCode(cursor.getString(2));
+                    mgradingrepository.setFruitType(cursor.getInt(3));
+                    mgradingrepository.setGrossWeight(cursor.getDouble(4));
+                    mgradingrepository.setFileName(cursor.getString(5));
+                    mgradingrepository.setFileLocation(cursor.getString(6));
+                    mgradingrepository.setFileExtension(cursor.getString(7));
+                    mgradingrepository.setTokenNumber(cursor.getString(8));
+                    mgradingrepository.setCreatedByUserId(cursor.getInt(9));
+                    mgradingrepository.setCreatedDate(cursor.getString(10));
+                    mgradingrepository.setServerUpdatedStatus(0);
+                    if (type == 1) {
+                        gradingrepolist.add(mgradingrepository);
+                        mgradingrepository = null;
+                    }
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "@@@ getting GradingRepo details " + e.getMessage());
+        }
+        return (T) ((type == 0) ? mgradingrepository : gradingrepolist);
+    }
+
+
 
 }

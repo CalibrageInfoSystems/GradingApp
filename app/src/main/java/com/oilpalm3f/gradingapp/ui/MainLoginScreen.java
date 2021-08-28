@@ -169,22 +169,22 @@ public class MainLoginScreen extends AppCompatActivity {
         return true;
     }
 
-//    public void startMasterSync() {
-//
-//
-//        DataSyncHelper.performMasterSync(this, PrefUtil.getBool(this, CommonConstants.IS_MASTER_SYNC_SUCCESS), new ApplicationThread.OnComplete() {
-//            @Override
-//            public void execute(boolean success, Object result, String msg) {
-//
-//                if (success) {
-//
-//                    ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            UiUtils.showCustomToastMessage("Data syncing success", MainLoginScreen.this, 1);
-//                            ProgressBar.hideProgressBar();
+    public void startMasterSync() {
+
+
+        DataSyncHelper.performMasterSync(this, PrefUtil.getBool(this, CommonConstants.IS_MASTER_SYNC_SUCCESS), new ApplicationThread.OnComplete() {
+            @Override
+            public void execute(boolean success, Object result, String msg) {
+
+                if (success) {
+
+                    ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
+                        @Override
+                        public void run() {
+                            UiUtils.showCustomToastMessage("Data syncing success", MainLoginScreen.this, 1);
+                            ProgressBar.hideProgressBar();
 //                            List<UserSync> userSyncList;
-////                                userSyncList = (List<UserSync>)dataAccessHandler.getUserSyncData(Queries.getInstance().countOfMasterSync());
+//                               userSyncList = (List<UserSync>)dataAccessHandler.getUserSyncData(Queries.getInstance().countOfMasterSync());
 //                            userSyncList = (List<UserSync>)dataAccessHandler.getUserSyncData(Queries.getInstance().countOfSync());
 //
 //                            if(userSyncList.size()==0){
@@ -193,22 +193,22 @@ public class MainLoginScreen extends AppCompatActivity {
 //                            }else {
 //                                dataAccessHandler.updateMasterSync();
 //                            }
-//
-//                        }
-//                    });
-//
-//                } else {
-//                    Log.v(LOG_TAG, "@@@ Master sync failed " + msg);
-//                    ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            UiUtils.showCustomToastMessage("Data syncing failed", MainLoginScreen.this, 1);
-//                            ProgressBar.hideProgressBar();
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//
-//    }
+
+                        }
+                    });
+
+                } else {
+                    Log.v(LOG_TAG, "@@@ Master sync failed " + msg);
+                    ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
+                        @Override
+                        public void run() {
+                            UiUtils.showCustomToastMessage("Data syncing failed", MainLoginScreen.this, 1);
+                            ProgressBar.hideProgressBar();
+                        }
+                    });
+                }
+            }
+        });
+
+    }
 }

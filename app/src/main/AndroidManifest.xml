@@ -42,7 +42,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-        <activity android:name=".ui.GradingActivity"></activity>
+        <activity android:name=".ui.GradingReportActivity"></activity>
+        <activity android:name=".ui.RefreshSyncActivity" />
+        <activity android:name=".ui.GradingActivity" />
         <activity android:name=".ui.QRScanActivity" />
         <activity android:name=".ui.MainLoginScreen" />
         <activity

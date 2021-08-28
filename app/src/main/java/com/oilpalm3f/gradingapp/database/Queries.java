@@ -600,6 +600,10 @@ public class Queries {
         return "select * from Address where ServerUpdatedStatus = 0";
     }
 
+    public String getGradingRepoRefresh() {
+        return "select * from FFBGradingRepository where ServerUpdatedStatus = 0";
+    }
+
     public String getFileRepositoryRefresh() {
         return "select * from FileRepository where ServerUpdatedStatus = 0";
     }

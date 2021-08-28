@@ -18,7 +18,9 @@ import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.DatabaseKeys;
 import com.oilpalm3f.gradingapp.database.Queries;
+import com.oilpalm3f.gradingapp.dbmodels.GradingFileRepository;
 import com.oilpalm3f.gradingapp.uihelper.ProgressBar;
+import com.oilpalm3f.gradingapp.utils.UiUtils;
 
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
@@ -145,84 +147,84 @@ public class DataSyncHelper {
         });
     }
 
-//    public static synchronized void performRefreshTransactionsSync(final Context context, final ApplicationThread.OnComplete onComplete) {
-//        countCheck = 0;
-//        transactionsCheck = 0;
-//        reverseSyncTransCount = 0;
-//        imagesCount = 0;
-//        refreshtableNamesList.clear();
-//        refreshtransactionsDataMap.clear();
-//        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
-//        ProgressBar.showProgressBar(context, "Sending data to server...");
-//        ApplicationThread.bgndPost(LOG_TAG, "getting transactions data", new Runnable() {
-//            @Override
-//            public void run() {
-//                getRefreshSyncTransDataMap(context, new ApplicationThread.OnComplete<LinkedHashMap<String, List>>() {
-//                    @Override
-//                    public void execute(boolean success, final LinkedHashMap<String, List> transDataMap, String msg) {
-//                        if (success) {
-//                            if (transDataMap != null && transDataMap.size() > 0) {
-//                                Log.v(LOG_TAG, "transactions data size " + transDataMap.size());
-//                                Set<String> transDataTableNames = transDataMap.keySet();
-//                                refreshtableNamesList.addAll(transDataTableNames);
-//                                refreshtransactionsDataMap = transDataMap;
-//                                sendTrackingData(context, onComplete);
-//                                postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
-//                            }
-//                        } else {
-//                            ProgressBar.hideProgressBar();
-//                            Log.v(LOG_TAG, "@@@ Transactions sync failed due to data retrieval error");
-//                            onComplete.execute(false, null, "Transactions sync failed due to data retrieval error");
-//                        }
-//                    }
-//                });
-//            }
-//        });
-//
-//    }
+    public static synchronized void performRefreshTransactionsSync(final Context context, final ApplicationThread.OnComplete onComplete) {
+        countCheck = 0;
+        transactionsCheck = 0;
+        reverseSyncTransCount = 0;
+        imagesCount = 0;
+        refreshtableNamesList.clear();
+        refreshtransactionsDataMap.clear();
+        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
+        ProgressBar.showProgressBar(context, "Sending data to server...");
+        ApplicationThread.bgndPost(LOG_TAG, "getting transactions data", new Runnable() {
+            @Override
+            public void run() {
+                getRefreshSyncTransDataMap(context, new ApplicationThread.OnComplete<LinkedHashMap<String, List>>() {
+                    @Override
+                    public void execute(boolean success, final LinkedHashMap<String, List> transDataMap, String msg) {
+                        if (success) {
+                            if (transDataMap != null && transDataMap.size() > 0) {
+                                Log.v(LOG_TAG, "transactions data size " + transDataMap.size());
+                                Set<String> transDataTableNames = transDataMap.keySet();
+                                refreshtableNamesList.addAll(transDataTableNames);
+                                refreshtransactionsDataMap = transDataMap;
+                                sendTrackingData(context, onComplete);
+                                postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
+                            }
+                        } else {
+                            ProgressBar.hideProgressBar();
+                            Log.v(LOG_TAG, "@@@ Transactions sync failed due to data retrieval error");
+                            onComplete.execute(false, null, "Transactions sync failed due to data retrieval error");
+                        }
+                    }
+                });
+            }
+        });
 
-//    public static void postTransactionsDataToCloud(final Context context, final String tableName, final DataAccessHandler dataAccessHandler, final ApplicationThread.OnComplete onComplete) {
-//
-//        List cctransDataList = refreshtransactionsDataMap.get(tableName);
-//
-//        if (null != cctransDataList && cctransDataList.size() > 0) {
-//            Type listType = new TypeToken<List>() {
-//            }.getType();
-//            Gson gson = new GsonBuilder().serializeNulls().create();
-//
-//            String dat = gson.toJson(cctransDataList, listType);
-//            JSONObject transObj = new JSONObject();
-//            try {
-//                transObj.put(tableName, new JSONArray(dat));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            Log.v(LOG_TAG, "@@@@ check.." + transObj.toString());
-//            CommonConstants.SyncTableName = tableName;
-//            CloudDataHandler.placeDataInCloud(context, transObj, Config.live_url + Config.transactionSyncURL, new ApplicationThread.OnComplete<String>() {
-//                @Override
-//                public void execute(boolean success, String result, String msg) {
-//                    if (success) {
-//                        dataAccessHandler.executeRawQuery(String.format(Queries.getInstance().updateServerUpdatedStatus(), tableName));
-//                        Log.v(LOG_TAG, "@@@ Transactions sync success for " + tableName);
-//                        transactionsCheck++;
-//                        if (transactionsCheck == refreshtransactionsDataMap.size()) {
-//                            Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
-//                            onComplete.execute(true, null, "Sync is success");
-//
-//                        } else {
-//                            postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
-//                        }
-//                    } else {
-//                        ApplicationThread.uiPost(LOG_TAG, "Sync is failed", new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
-//                            }
-//                        });
-//                        transactionsCheck++;
-//                        if (transactionsCheck == refreshtransactionsDataMap.size()) {
-//                            Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
+    }
+
+    public static void postTransactionsDataToCloud(final Context context, final String tableName, final DataAccessHandler dataAccessHandler, final ApplicationThread.OnComplete onComplete) {
+
+        List cctransDataList = refreshtransactionsDataMap.get(tableName);
+
+        if (null != cctransDataList && cctransDataList.size() > 0) {
+            Type listType = new TypeToken<List>() {
+            }.getType();
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            String dat = gson.toJson(cctransDataList, listType);
+            JSONObject transObj = new JSONObject();
+            try {
+                transObj.put(tableName, new JSONArray(dat));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.v(LOG_TAG, "@@@@ check.." + transObj.toString());
+            CommonConstants.SyncTableName = tableName;
+            CloudDataHandler.placeDataInCloud(context, transObj, Config.live_url + Config.transactionSyncURL, new ApplicationThread.OnComplete<String>() {
+                @Override
+                public void execute(boolean success, String result, String msg) {
+                    if (success) {
+                        dataAccessHandler.executeRawQuery(String.format(Queries.getInstance().updateServerUpdatedStatus(), tableName));
+                        Log.v(LOG_TAG, "@@@ Transactions sync success for " + tableName);
+                        transactionsCheck++;
+                        if (transactionsCheck == refreshtransactionsDataMap.size()) {
+                            Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
+                            onComplete.execute(true, null, "Sync is success");
+
+                        } else {
+                            postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
+                        }
+                    } else {
+                        ApplicationThread.uiPost(LOG_TAG, "Sync is failed", new Runnable() {
+                            @Override
+                            public void run() {
+                                UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
+                            }
+                        });
+                        transactionsCheck++;
+                        if (transactionsCheck == refreshtransactionsDataMap.size()) {
+                            Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
 //                            final List<ImageDetails> imagesData = dataAccessHandler.getImageDetails();
 //                            if (null != imagesData && !imagesData.isEmpty()) {
 //                                sendImageDetails(context, imagesData, dataAccessHandler, onComplete);
@@ -230,19 +232,19 @@ public class DataSyncHelper {
 //                                ProgressBar.hideProgressBar();
 //                                onComplete.execute(true, null, "Sync is success");
 //                            }
-//                        } else {
-//                            postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
-//                        }
-//                        Log.v(LOG_TAG, "@@@ Transactions sync failed for " + tableName);
-//                        Log.v(LOG_TAG, "@@@ Transactions sync due to " + result);
-//
-//                    }
-//                }
-//            });
-//        } else {
-//            transactionsCheck++;
-//            if (transactionsCheck == refreshtransactionsDataMap.size()) {
-//                Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
+                        } else {
+                            postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
+                        }
+                        Log.v(LOG_TAG, "@@@ Transactions sync failed for " + tableName);
+                        Log.v(LOG_TAG, "@@@ Transactions sync due to " + result);
+
+                    }
+                }
+            });
+        } else {
+            transactionsCheck++;
+            if (transactionsCheck == refreshtransactionsDataMap.size()) {
+                Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
 //                final List<ImageDetails> imagesData = dataAccessHandler.getImageDetails();
 //                if (null != imagesData && !imagesData.isEmpty()) {
 //                    sendImageDetails(context, imagesData, dataAccessHandler, onComplete);
@@ -252,11 +254,11 @@ public class DataSyncHelper {
 //                    Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
 //
 //                }
-//            } else {
-//                postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
-//            }
-//        }
-//    }
+            } else {
+                postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
+            }
+        }
+    }
 
 //    public static void sendImageDetails(final Context context, final List<ImageDetails> imagesData, final DataAccessHandler dataAccessHandler, final ApplicationThread.OnComplete onComplete) {
 //        Gson gson = new GsonBuilder().serializeNulls().create();
@@ -299,121 +301,20 @@ public class DataSyncHelper {
 //    }
 
 
-//    private static void getRefreshSyncTransDataMap(final Context context, final ApplicationThread.OnComplete onComplete) {
-//
-//        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
-//
-//        List<Address> addressList = (List<Address>) dataAccessHandler.getSelectedFarmerAddress(Queries.getInstance().getAddressRefresh(), 1);
-//        List<Farmer> farmersList = (List<Farmer>) dataAccessHandler.getSelectedFarmerData(Queries.getInstance().getSelectedFarmerRefresh(), 1);
-//        List<Plot> plotList = (List<Plot>) dataAccessHandler.getSelectedPlotData(Queries.getInstance().getPlotRefresh(), 1);
-//        List<PlotCurrentCrop> plotCurrentCropList = (List<PlotCurrentCrop>) dataAccessHandler.getSelectedPlotCurrentCropData(Queries.getInstance().getPlotCurrentCropRefresh(), 1);
-//        List<NeighbourPlot> neighbourPlotList = (List<NeighbourPlot>) dataAccessHandler.getSelectedNeighbourPlotData(Queries.getInstance().getNeighbourPlotRefresh(), 1);
-//        List<WaterResource> waterResourceList = (List<WaterResource>) dataAccessHandler.getWaterResourceData(Queries.getInstance().getWaterResourceRefresh(), 1);
-//        List<SoilResource> soilResourceList = (List<SoilResource>) dataAccessHandler.getSoilResourceData(Queries.getInstance().getSoilResourceRefresh(), 1);
-//        List<PlotIrrigationTypeXref> PlotIrrigationTypeXrefList = (List<PlotIrrigationTypeXref>) dataAccessHandler.getPlotIrrigationXRefData(Queries.getInstance().getPlotIrrigationTypeXrefRefresh(), 1);
-//        List<FollowUp> followUpList = (List<FollowUp>) dataAccessHandler.getFollowupData(Queries.getInstance().getFollowUpRefresh(), 1);
-//        List<Referrals> referralsList = (List<Referrals>) dataAccessHandler.getReferralsData(Queries.getInstance().getReferralsRefresh(), 1);
-//        List<MarketSurvey> marketSurveyList = (List<MarketSurvey>) dataAccessHandler.getMarketSurveyData(Queries.getInstance().getMarketSurveyRefresh(), 1);
-//        List<FarmerHistory> farmerHistoryList = (List<FarmerHistory>) dataAccessHandler.getFarmerHistoryData(Queries.getInstance().getFarmerHistoryRefresh());
-//        List<IdentityProof> identityProofList = (List<IdentityProof>) dataAccessHandler.getIdProofsData(Queries.getInstance().getIdentityProofRefresh(), 1);
-//        List<FarmerBank> farmerBankList = (List<FarmerBank>) dataAccessHandler.getFarmerBankData(Queries.getInstance().getFarmerBankRefresh(), 1);
-//        List<PlotLandlord> plotLandlordList = (List<PlotLandlord>) dataAccessHandler.getPlotLandLordData(Queries.getInstance().getPlotLandlordRefresh(), 1);
-//        List<LandlordBank> landlordBankList = (List<LandlordBank>) dataAccessHandler.getLandLordBankData(Queries.getInstance().getLandlordBankRefresh(), 1);
-//        List<LandlordIdProof> landlordIdProofList = (List<LandlordIdProof>) dataAccessHandler.getLandLordIDProofsData(Queries.getInstance().getLandlordIDProofsRefresh(), 1);
-//        List<CookingOil> cookingOilList = (List<CookingOil>) dataAccessHandler.getCookingOilData(Queries.getInstance().getCookingOilRefresh(), 1);
-//        List<CropMaintenanceHistory> maintenanceHistoryList = (List<CropMaintenanceHistory>) dataAccessHandler.getCropMaintanceHistoryData(Queries.getInstance().getCropMaintanenanceHistoryRefresh(), 1);
-//
-//        List<Pest> pestList = (List<Pest>) dataAccessHandler.getPestData(Queries.getInstance().getPestRefresh(), 1);
-//        List<Plantation> plantationList = (List<Plantation>) dataAccessHandler.getPlantationData(Queries.getInstance().getPlantationRefresh(), 1);
-//
-//
-//        List<Disease> diseaseList = (List<Disease>) dataAccessHandler.getDiseaseData(Queries.getInstance().getDiseaseRefresh(), 1);
-//        List<Fertilizer> fertilizerList = (List<Fertilizer>) dataAccessHandler.getFertilizerData(Queries.getInstance().getFertilizerRefresh(), 1);
-//        List<Harvest> harvestList = (List<Harvest>) dataAccessHandler.getHarvestData(Queries.getInstance().getHarvestRefresh(), 1);
-//        List<Healthplantation> healthplantationList = (List<Healthplantation>) dataAccessHandler.getHealthplantationData(Queries.getInstance().getHealthPlantationRefresh(), 1);
-//        List<InterCropPlantationXref> interCropPlantationXrefList = (List<InterCropPlantationXref>) dataAccessHandler.getInterCropPlantationXrefData(Queries.getInstance().getInterCropPlantationXrefRefresh(), 1);
-//        List<Nutrient> nutrientList = (List<Nutrient>) dataAccessHandler.getNutrientData(Queries.getInstance().getNutrientRefresh(), 1);
-//        List<RecommndFertilizer> recomFertilizer = (List<RecommndFertilizer>) dataAccessHandler.getRecomFertlizerData(Queries.getInstance().getRecomFertilizerRefresh(), 1);
-//        List<Ownershipfilerepository> ownershipfilerepositoryList = (List<Ownershipfilerepository>) dataAccessHandler.getOwnershipfilerepositoryData(Queries.getInstance().getOwnerShipFileRepositoryRefresh(), 1);
-//        List<Uprootment> uprootmentList = (List<Uprootment>) dataAccessHandler.getUprootmentData(Queries.getInstance().getUprootmentRefresh(), 1);
-//        List<Weed> weedtList = (List<Weed>) dataAccessHandler.getWeedData(Queries.getInstance().getWeedRefresh(), 1);
-//        List<YieldAssessment> YieldList = (List<YieldAssessment>) dataAccessHandler.getYieldData(Queries.getInstance().getYieldRefresh(), 1);
-//        List<WhiteFlyAssessment> WhiteList = (List<WhiteFlyAssessment>) dataAccessHandler.getWhiteData(Queries.getInstance().getWhiteRefresh(), 1);
-//        List<IdentityProofFileRepositoryXref> identityProofFileRepositoryXreftList = (List<IdentityProofFileRepositoryXref>) dataAccessHandler.getIdentityProofFileRepositoryXrefData(Queries.getInstance().getIdentityProofFileRepositoryXrefRefresh(), 1);
-//        List<PestChemicalXref> pestChemicalXrefList = (List<PestChemicalXref>) dataAccessHandler.getPestChemicalXrefData(Queries.getInstance().getPestChemicalXrefRefresh(), 1);
-//        List<PlantationFileRepositoryXref> plantationFileRepositoryXrefList = (List<PlantationFileRepositoryXref>) dataAccessHandler.getPlantationFileRepositoryXrefData(Queries.getInstance().getPlantationFileRepositoryXrefRefresh(), 1);
-//        List<ActivityLog> activityLogList = dataAccessHandler.getActivityLogData();
-//        List<GeoBoundaries> geoBoundariesList = (List<GeoBoundaries>) dataAccessHandler.getGeoTagData(Queries.getInstance().getGeoBoundariesRefresh(), 1);
-//        List<Complaints> complaintsList = (List<Complaints>) dataAccessHandler.getComplaints(Queries.getInstance().getComplaintData(), 1);
-//        List<ComplaintStatusHistory> complaintStatusHistoryList = (List<ComplaintStatusHistory>) dataAccessHandler.getComplaintStatusHistory(Queries.getInstance().getComplaintStatusHistory(), 1);
-//        List<ComplaintRepositoryRefresh> complaintRepositoryList = (List<ComplaintRepositoryRefresh>) dataAccessHandler.getComplaintRefreshRepository(Queries.getInstance().getComplaintRepository(), 1);
-//        List<ComplaintTypeXref> complaintTypeXrefList = (List<ComplaintTypeXref>) dataAccessHandler.getComplaintTypeXref(Queries.getInstance().getComplaintTypeXref(), 1);
-//        List<FileRepository> fileRepoList = (List<FileRepository>) dataAccessHandler.getFileRepositoryData(Queries.getInstance().getFileRepositoryRefresh(), 1);
-//        List<VisitLog> visitLogList = (List<VisitLog>) dataAccessHandler.getVisitLogData(Queries.getInstance().getVistLogs());
-//        List<UserSync> userSyncList = (List<UserSync>) dataAccessHandler.getUserSyncData(Queries.getInstance().getUserSyncDetails());
-//        List<Alerts> alertsList = (List<Alerts>) dataAccessHandler.getAlertsDetails(Queries.getInstance().getAlertsDetailsQueryToSendCloud(), 1, true);
-//        List<HarvestorVisitHistory> harvestorVisithistoryList = (List<HarvestorVisitHistory>) dataAccessHandler.getSelectedHarvestorHistoryData(Queries.getInstance().getSelectedHarvestorHistoryRefresh(), 1);
-//        List<HarvestorVisitDetails> harvestorVisitList = (List<HarvestorVisitDetails>) dataAccessHandler.getSelectedHarvestorData(Queries.getInstance().getSelectedHarvestorRefresh(), 1);
-//
-//
-//
-//        LinkedHashMap<String, List> allRefreshDataMap = new LinkedHashMap<>();
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_ADDRESS, addressList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FARMER, farmersList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLOT, plotList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLOTCURRENTCROP, plotCurrentCropList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_NEIGHBOURPLOT, neighbourPlotList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_WATERESOURCE, waterResourceList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLOTIRRIGATIONTYPEXREF, PlotIrrigationTypeXrefList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_SOILRESOURCE, soilResourceList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FOLLOWUP, followUpList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_REFERRALS, referralsList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_MARKETSURVEY, marketSurveyList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FARMERHISTORY, farmerHistoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_IDENTITYPROOF, identityProofList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FARMERBANK, farmerBankList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLANTATION, plantationList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLOTLANDLORD, plotLandlordList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_LANDLORDBANK, landlordBankList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_LANDLORDIDPROOFS, landlordIdProofList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_COOKINGOIL, cookingOilList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_CROPMAINTENANCEHISTORY, maintenanceHistoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_DISEASE, diseaseList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FERTLIZER, fertilizerList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_HARVEST, harvestList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_HEALTHPLANTATION, healthplantationList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_INTERCROPPLANTATIONXREF, interCropPlantationXrefList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_NUTRIENT, nutrientList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_RECOMMND_FERTLIZER, recomFertilizer);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_OWNERSHIPFILEREPO, ownershipfilerepositoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PEST, pestList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_UPROOTMENT, uprootmentList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_WEED, weedtList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_YIELDASSESMENT, YieldList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_WHITE, WhiteList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_IDPROOFFILEREPOXREF, identityProofFileRepositoryXreftList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PESTCHEMICALXREF, pestChemicalXrefList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_PLANTATIONFILEREPOXREF, plantationFileRepositoryXrefList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_ACTIVITYLOG, activityLogList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_FILEREPOSITORY, fileRepoList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_GEOBOUNDARIES, geoBoundariesList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_COMPLAINT, complaintsList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_COMPLAINTREPOSITORY, complaintRepositoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_COMPLAINTTYPEXREF, complaintTypeXrefList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_COMPLAINTSTATUSHISTORY, complaintStatusHistoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_VisitLog, visitLogList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_UserSync, userSyncList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_ALERTS, alertsList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_HarvestorVisitHistory, harvestorVisithistoryList);
-//        allRefreshDataMap.put(DatabaseKeys.TABLE_HarvestorVisitDetails, harvestorVisitList);
-//
-//
-////        allRefreshDataMap.put(DatabaseKeys.TABLE_Location_TRACKING_DETAILS, gpsTrackingList);
-//
-//
-//        onComplete.execute(true, allRefreshDataMap, "here is collection of table transactions data");
-//
-//    }
+    private static void getRefreshSyncTransDataMap(final Context context, final ApplicationThread.OnComplete onComplete) {
+
+        final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);
+
+        List<GradingFileRepository> gradingrepoList = (List<GradingFileRepository>) dataAccessHandler.getGradingRepoDetails(Queries.getInstance().getGradingRepoRefresh(), 1);
+
+
+        LinkedHashMap<String, List> allRefreshDataMap = new LinkedHashMap<>();
+        allRefreshDataMap.put(DatabaseKeys.TABLE_Grading_Repository, gradingrepoList);
+
+
+        onComplete.execute(true, allRefreshDataMap, "here is collection of table transactions data");
+
+    }
 
 //    public static void startTransactionSync(final Context context, final ProgressDialogFragment progressDialogFragment) {
 //

@@ -9,6 +9,7 @@ public class DatabaseKeys {
     public static List<String> transactionTables = new ArrayList<>();
     public static String TABLE_YIELDASSESMENT="YieldAssessment";
     public static String TABLE_ADDRESS = "Address";
+    public static String TABLE_Grading_Repository = "FFBGradingRepository";
 
     public static String TABLE_FILEREPOSITORY = "FileRepository";
     public static String TABLE_NURSERYSAPLING_DETAILS = "NurserySaplingDetails";
