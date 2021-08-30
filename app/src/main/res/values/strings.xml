@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">GradingApp</string>
+
+    <string name="has_paired">Paired</string>
+    <string name="not_paired">Not Paired</string>
 </resources>

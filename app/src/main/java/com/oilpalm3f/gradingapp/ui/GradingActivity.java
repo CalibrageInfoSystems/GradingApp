@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -29,6 +30,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.print.sdk.Barcode;
+import com.android.print.sdk.PrinterConstants;
+import com.android.print.sdk.PrinterInstance;
 import com.oilpalm3f.gradingapp.BuildConfig;
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
@@ -36,6 +40,10 @@ import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.common.InputFilterMinMax;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
+import com.oilpalm3f.gradingapp.printer.BluetoothDevicesFragment;
+import com.oilpalm3f.gradingapp.printer.PrinterChooserFragment;
+import com.oilpalm3f.gradingapp.printer.UsbDevicesListFragment;
+import com.oilpalm3f.gradingapp.printer.onPrinterType;
 import com.oilpalm3f.gradingapp.utils.ImageUtility;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
@@ -49,7 +57,9 @@ import java.util.List;
 
 import static com.oilpalm3f.gradingapp.common.CommonUtils.REQUEST_CAM_PERMISSIONS;
 
-public class GradingActivity extends AppCompatActivity {
+import org.apache.commons.lang3.StringUtils;
+
+public class GradingActivity extends AppCompatActivity implements BluetoothDevicesFragment.onDeviceSelected, onPrinterType, UsbDevicesListFragment.onUsbDeviceSelected  {
 
     private static final String LOG_TAG = GradingActivity.class.getName();
 
@@ -61,6 +71,8 @@ public class GradingActivity extends AppCompatActivity {
     Button submit;
     Spinner isloosefruitavailable_spinner;
     LinearLayout loosefruitweightLL;
+
+    String[] splitString;
     
     private DataAccessHandler dataAccessHandler;
     private ImageView slipImage, slipIcon;
@@ -127,7 +139,7 @@ public class GradingActivity extends AppCompatActivity {
             Log.d("QR Code Value is", qrvalue + "");
         }
 
-      String[] splitString = qrvalue.split("/");
+     splitString = qrvalue.split("/");
 //
         Log.d("String1", splitString[0] + "");
         Log.d("String2", splitString[1] + "");
@@ -188,6 +200,40 @@ public class GradingActivity extends AppCompatActivity {
                 if (validate()){
                    // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
 
+
+                    List<LinkedHashMap> repodetails = new ArrayList<>();
+                    LinkedHashMap maprepo = new LinkedHashMap();
+
+                    maprepo.put("TokenNumber", splitString[0] + "");
+                    maprepo.put("CCCode", splitString[1] + "");
+                    maprepo.put("FruitType", splitString[2] + "");
+                    maprepo.put("GrossWeight", splitString[3] + "");
+
+                    maprepo.put("FileName", splitString[1] + "");
+                    maprepo.put("FileLocation", mCurrentPhotoPath);
+                    maprepo.put("FileExtension", ".jpg");
+
+                    maprepo.put("CreatedByUserId", CommonConstants.USER_ID);
+                    maprepo.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
+
+                    maprepo.put("ServerUpdatedStatus", false);
+
+                    repodetails.add(maprepo);
+
+                    dataAccessHandler.saveData("FFBGradingRepository", repodetails, new ApplicationThread.OnComplete<String>() {
+                        @Override
+                        public void execute(boolean success, String result, String msg) {
+
+                            if (success) {
+                                Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_FFBGradingRepository INSERT COMPLETED");
+                            } else {
+                                Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+
+
                     List<LinkedHashMap> details = new ArrayList<>();
                     LinkedHashMap map = new LinkedHashMap();
 
@@ -197,16 +243,16 @@ public class GradingActivity extends AppCompatActivity {
                     map.put("GrossWeight", splitString[3] + "");
                     map.put("TokenDate", splitString[4] + "");
 
-                    map.put("UnRipen", Integer.parseInt(unripen.getText().toString()));
-                    map.put("UnderRipe", Integer.parseInt(underripe.getText().toString()));
-                    map.put("Ripen", Integer.parseInt(ripen.getText().toString()));
-                    map.put("OverRipe", Integer.parseInt(overripe.getText().toString()));
-                    map.put("Diseased", Integer.parseInt(diseased.getText().toString()));
-                    map.put("EmptyBunches", Integer.parseInt(emptybunches.getText().toString()));
-                    map.put("FFBQualityLong", Integer.parseInt(longstalk.getText().toString()));
-                    map.put("FFBQualityMedium", Integer.parseInt(mediumstalk.getText().toString()));
-                    map.put("FFBQualityShort", Integer.parseInt(shortstalk.getText().toString()));
-                    map.put("FFBQualityOptimum", Integer.parseInt(optimum.getText().toString()));
+                    map.put("UnRipen", unripen.getText().toString());
+                    map.put("UnderRipe", underripe.getText().toString());
+                    map.put("Ripen", ripen.getText().toString());
+                    map.put("OverRipe", overripe.getText().toString());
+                    map.put("Diseased", diseased.getText().toString());
+                    map.put("EmptyBunches", emptybunches.getText().toString());
+                    map.put("FFBQualityLong", longstalk.getText().toString());
+                    map.put("FFBQualityMedium", mediumstalk.getText().toString());
+                    map.put("FFBQualityShort", shortstalk.getText().toString());
+                    map.put("FFBQualityOptimum", optimum.getText().toString());
                     int isfruitavailable = 0;
 
                     if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1){
@@ -220,7 +266,7 @@ public class GradingActivity extends AppCompatActivity {
 
                     if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1) {
 
-                        map.put("LooseFruitWeight", Integer.parseInt(loosefruitweight.getText().toString()));
+                        map.put("LooseFruitWeight", loosefruitweight.getText().toString());
                     }
 
                     map.put("RejectedBunches",rejectedBunches.getText().toString());
@@ -237,7 +283,12 @@ public class GradingActivity extends AppCompatActivity {
                             if (success) {
                                 Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT COMPLETED");
                                 Toast.makeText(GradingActivity.this, "Submit Successfully", Toast.LENGTH_SHORT).show();
-                                finish();
+
+                                FragmentManager fm = getSupportFragmentManager();
+                                PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
+                                printerChooserFragment.setPrinterType(GradingActivity.this);
+                                printerChooserFragment.show(fm, "bluetooth fragment");
+                                //finish();
 
                             } else {
                                 Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
@@ -373,6 +424,10 @@ public class GradingActivity extends AppCompatActivity {
             return false;
         }
 
+        if (TextUtils.isEmpty(mCurrentPhotoPath)) {
+            UiUtils.showCustomToastMessage("Please Take Grading Image", GradingActivity.this, 0);
+            return false;
+        }
 
         if ((Double.parseDouble(unripen.getText().toString()) + Double.parseDouble(underripe.getText().toString()) + Double.parseDouble(ripen.getText().toString()) + Double.parseDouble(overripe.getText().toString()) + Double.parseDouble(diseased.getText().toString()) + Double.parseDouble(emptybunches.getText().toString())) != 100) {
             UiUtils.showCustomToastMessage("FFB Bunch Quality should be equal to 100%", GradingActivity.this, 0);
@@ -464,5 +519,294 @@ public class GradingActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public void selectedDevice(PrinterInstance printerInstance) {
+
+        Log.v(LOG_TAG, "selected address is ");
+        if (null != printerInstance) {
+            enablePrintBtn(false);
+            for (int i = 0; i < 1; i++) {
+                printGradingData(printerInstance, false, i);
+            }
+        } else {
+            UiUtils.showCustomToastMessage("Printing failed", GradingActivity.this, 1);
+        }
+
+    }
+
+    public void enablePrintBtn(final boolean enable) {
+        ApplicationThread.uiPost(LOG_TAG, "updating ui", new Runnable() {
+            @Override
+            public void run() {
+                submit.setEnabled(enable);
+                submit.setClickable(enable);
+                submit.setFocusable(enable);
+            }
+        });
+
+    }
+
+    @Override
+    public void enablingPrintButton(boolean rePrint) {
+        enablePrintBtn(rePrint);
+    }
+
+    @Override
+    public void onPrinterTypeSelected(int printerType) {
+
+        if (printerType == PrinterChooserFragment.USB_PRINTER) {
+            FragmentManager fm = getSupportFragmentManager();
+            UsbDevicesListFragment usbDevicesListFragment = new UsbDevicesListFragment();
+            usbDevicesListFragment.setOnUsbDeviceSelected(GradingActivity.this);
+            usbDevicesListFragment.show(fm, "usb fragment");
+        } else {
+            FragmentManager fm = getSupportFragmentManager();
+            BluetoothDevicesFragment bluetoothDevicesFragment = new BluetoothDevicesFragment();
+            bluetoothDevicesFragment.setOnDeviceSelected(GradingActivity.this);
+            bluetoothDevicesFragment.show(fm, "bluetooth fragment");
+        }
+
+    }
+
+    public void printGradingData(PrinterInstance mPrinter, boolean isReprint, int printCount) {
+
+        mPrinter.init();
+        StringBuilder sb = new StringBuilder();
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
+        mPrinter.setCharacterMultiple(0, 1);
+        mPrinter.printText(" 3F Oil Palm Agrotech PVT LTD " + "\n");
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
+        mPrinter.setCharacterMultiple(0, 1);
+        mPrinter.printText("   FFB Grading Receipt" + "\n");
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_LEFT);
+        mPrinter.setCharacterMultiple(0, 0);
+        mPrinter.setLeftMargin(15, 15);
+        sb.append("==============================================" + "\n");
+
+        sb.append(" ");
+        sb.append(" Token Number : ").append(splitString[0] + "").append("\n");
+        sb.append(" ");
+        sb.append(" CCCode : ").append(splitString[1] + "").append("\n");
+        sb.append(" ");
+        sb.append(" Fruit Type : ").append(splitString[2] + "").append("\n");
+        sb.append(" ");
+        sb.append(" Gross Weight(Kgs) : ").append(splitString[3] + "").append("\n");
+        sb.append(" ");
+        sb.append(" Token Date : ").append(splitString[4] + "").append("\n");
+
+
+
+        sb.append(" ");
+        sb.append("-----------------------------------------------\n");
+        sb.append("  FFB Quality Details" + "\n");
+        sb.append("-----------------------------------------------\n");
+
+        if (!unripen.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Unripen : ").append(unripen.getText().toString() + "%").append("\n");
+        }
+        if (!underripe.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Under Ripe : ").append(underripe.getText().toString() + "%").append("\n");
+        }
+        if (!ripen.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Ripen : ").append(ripen.getText().toString() + "%").append("\n");
+        }
+        if (!overripe.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Over Ripe : ").append(overripe.getText().toString() + "%").append("\n");
+        }
+        if (!diseased.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Diseased : ").append(diseased.getText().toString() + "%").append("\n");
+        }
+        if (!emptybunches.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Empty Bunch's : ").append(emptybunches.getText().toString() + "%").append("\n");
+        }
+
+        sb.append(" ");
+        sb.append("-----------------------------------------------\n");
+        sb.append("  Stalk Quality Details" + "\n");
+        sb.append("-----------------------------------------------\n");
+
+        if (!longstalk.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Long : ").append(longstalk.getText().toString() + "%").append("\n");
+        }
+        if (!mediumstalk.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Medium : ").append(mediumstalk.getText().toString() + "%").append("\n");
+        }
+        if (!shortstalk.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Short : ").append(shortstalk.getText().toString() + "%").append("\n");
+        }
+        if (!optimum.getText().toString().equalsIgnoreCase("0")) {
+            sb.append(" ");
+            sb.append(" Optimum : ").append(optimum.getText().toString() + "%").append("\n");
+        }
+
+        sb.append(" ");
+        sb.append("-----------------------------------------------\n");
+
+        if (!TextUtils.isEmpty(loosefruitweight.getText().toString())){
+
+            sb.append(" ");
+            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(loosefruitweight.getText().toString() + "Kg").append("\n");
+
+        }
+
+        if (rejectedBunches.getText().toString() != "0") {
+            sb.append(" ");
+            sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString()).append("\n");
+        }
+
+        if (gradingdoneby.getText().toString() != "0") {
+            sb.append(" ");
+            sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
+        }
+
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" CC Officer signature");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" Farmer signature");
+        sb.append(" ");
+        sb.append("\n");
+        sb.append(" ");
+
+        mPrinter.printText(sb.toString());
+
+        boolean fruitavailable;
+
+       if( isloosefruitavailable_spinner.getSelectedItemPosition() == 1){
+
+           fruitavailable = true;
+        }else {
+           fruitavailable = false;
+       }
+
+        String hashString = qrvalue+"/"+unripen.getText().toString()+"/"+underripe.getText().toString()+"/"+ripen.getText().toString()
+                +"/"+overripe.getText().toString()+"/"+diseased.getText().toString()+"/"+emptybunches.getText().toString()+"/"
+                +longstalk.getText().toString()+"/"+mediumstalk.getText().toString()+"/"+shortstalk.getText().toString()+"/"+
+                optimum.getText().toString()+"/"+fruitavailable+"/"+loosefruitweight.getText().toString()+"/"+rejectedBunches.getText().toString()+
+                "/"+gradingdoneby.getText().toString();
+        String qrCodeValue = hashString;
+        Log.d("qrCodeValueis", qrCodeValue  + "");
+        Barcode barcode = new Barcode(PrinterConstants.BarcodeType.QRCODE, 3, 95, 3, qrCodeValue);
+
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
+        mPrinter.setCharacterMultiple(0, 1);
+
+        if(CommonConstants.PrinterName.contains("AMIGOS")){
+            Log.d(LOG_TAG,"########### NEW ##############");
+            print_qr_code(mPrinter,qrCodeValue);
+        }else{
+            Log.d(LOG_TAG,"########### OLD ##############");
+            mPrinter.printBarCode(barcode);
+        }
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
+        mPrinter.setCharacterMultiple(0, 1);
+        mPrinter.printText(qrCodeValue);
+
+        String spaceBuilder = "\n" +
+                " " +
+                "\n" +
+                " " +
+                "\n" +
+                "\n" +
+                " " +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n";
+        mPrinter.printText(spaceBuilder);
+
+        boolean printSuccess = false;
+        try {
+            mPrinter.setPrinter(PrinterConstants.Command.PRINT_AND_WAKE_PAPER_BY_LINE, 2);
+            printSuccess = true;
+        } catch (Exception e) {
+            Log.v(LOG_TAG, "@@@ printing failed " + e.getMessage());
+            UiUtils.showCustomToastMessage("Printing failes due to " + e.getMessage(), GradingActivity.this, 1);
+            printSuccess = false;
+        } finally {
+            if (printSuccess) {
+                Toast.makeText(GradingActivity.this, "Print Success", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+
+    }
+
+    public void print_qr_code(PrinterInstance mPrinter,String qrdata)
+    {
+        int store_len = qrdata.length() + 3;
+        byte store_pL = (byte) (store_len % 256);
+        byte store_pH = (byte) (store_len / 256);
+
+
+        // QR Code: Select the modelc
+        //              Hex     1D      28      6B      04      00      31      41      n1(x32)     n2(x00) - size of model
+        // set n1 [49 x31, model 1] [50 x32, model 2] [51 x33, micro qr code]
+        // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=140
+        byte[] modelQR = {(byte)0x1d, (byte)0x28, (byte)0x6b, (byte)0x04, (byte)0x00, (byte)0x31, (byte)0x41, (byte)0x32, (byte)0x00};
+
+        // QR Code: Set the size of module
+        // Hex      1D      28      6B      03      00      31      43      n
+        // n depends on the printer
+        // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=141
+
+
+        byte[] sizeQR = {(byte)0x1d, (byte)0x28, (byte)0x6b, (byte)0x03, (byte)0x00, (byte)0x31, (byte)0x43, (byte)0x08};
+
+
+        //          Hex     1D      28      6B      03      00      31      45      n
+        // Set n for error correction [48 x30 -> 7%] [49 x31-> 15%] [50 x32 -> 25%] [51 x33 -> 30%]
+        // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=142
+        byte[] errorQR = {(byte)0x1d, (byte)0x28, (byte)0x6b, (byte)0x03, (byte)0x00, (byte)0x31, (byte)0x45, (byte)0x31};
+
+
+        // QR Code: Store the data in the symbol storage area
+        // Hex      1D      28      6B      pL      pH      31      50      30      d1...dk
+        // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=143
+        //                        1D          28          6B         pL          pH  cn(49->x31) fn(80->x50) m(48->x30) d1…dk
+        byte[] storeQR = {(byte)0x1d, (byte)0x28, (byte)0x6b, store_pL, store_pH, (byte)0x31, (byte)0x50, (byte)0x30};
+
+
+        // QR Code: Print the symbol data in the symbol storage area
+        // Hex      1D      28      6B      03      00      31      51      m
+        // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=144
+        byte[] printQR = {(byte)0x1d, (byte)0x28, (byte)0x6b, (byte)0x03, (byte)0x00, (byte)0x31, (byte)0x51, (byte)0x30};
+
+        // flush() runs the print job and clears out the print buffer
+//        flush();
+
+        // write() simply appends the data to the buffer
+        mPrinter.sendByteData(modelQR);
+
+        mPrinter.sendByteData(sizeQR);
+        mPrinter.sendByteData(errorQR);
+        mPrinter.sendByteData(storeQR);
+        mPrinter.sendByteData(qrdata.getBytes());
+        mPrinter.sendByteData(printQR);
+
     }
 }
