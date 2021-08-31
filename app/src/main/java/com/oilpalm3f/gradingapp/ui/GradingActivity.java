@@ -140,7 +140,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         }
 
 
-      String[] splitString = qrvalue.split("/");
+       splitString = qrvalue.split("/");
 //
         Log.d("String1", splitString[0] + "");
         Log.d("String2", splitString[1] + "");

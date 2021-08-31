@@ -72,7 +72,6 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         }
 
 
-
        if(item.getUnRipen() != 0){
         holder.tvunripen.setText(item.getUnRipen()+"");}
        else{
@@ -221,5 +220,11 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
     public void setonPrintSelected(final onPrintOptionSelected onPrintSelected) {
         this.onPrintSelected = onPrintSelected;
+    }
+
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
     }
 }

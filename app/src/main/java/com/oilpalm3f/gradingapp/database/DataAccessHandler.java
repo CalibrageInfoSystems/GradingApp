@@ -826,7 +826,6 @@ public class DataAccessHandler <T> {
                     grading_details.setFruitType(cursor.getString(cursor.getColumnIndex("FruitType")));
                     grading_details.setGrossWeight(cursor.getString(cursor.getColumnIndex("GrossWeight")));
                     grading_details.setTokenDate(cursor.getString(cursor.getColumnIndex("TokenDate")));
-                    grading_details.setGrossWeight(cursor.getString(cursor.getColumnIndex("GrossWeight")));
                     grading_details.setUnRipen(cursor.getInt(cursor.getColumnIndex("UnRipen")));
                     grading_details.setUnderRipe(cursor.getInt(cursor.getColumnIndex("UnderRipe")));
                     grading_details.setRipen(cursor.getInt(cursor.getColumnIndex("Ripen")));
