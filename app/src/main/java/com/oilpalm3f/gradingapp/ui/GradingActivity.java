@@ -654,21 +654,14 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         sb.append("-----------------------------------------------\n");
 
         if (!TextUtils.isEmpty(loosefruitweight.getText().toString())){
-
             sb.append(" ");
             sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(loosefruitweight.getText().toString() + "Kg").append("\n");
-
         }
-
-        if (rejectedBunches.getText().toString() != "0") {
             sb.append(" ");
             sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString()).append("\n");
-        }
-
-        if (gradingdoneby.getText().toString() != "0") {
             sb.append(" ");
             sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
-        }
+
 
         sb.append(" ");
         sb.append("\n");
@@ -703,10 +696,18 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
            fruitavailable = false;
        }
 
+       String fruightweight;
+
+       if(TextUtils.isEmpty(loosefruitweight.getText().toString())){
+           fruightweight = "null";
+       }else{
+           fruightweight = loosefruitweight.getText().toString();
+       }
+
         String hashString = qrvalue+"/"+unripen.getText().toString()+"/"+underripe.getText().toString()+"/"+ripen.getText().toString()
                 +"/"+overripe.getText().toString()+"/"+diseased.getText().toString()+"/"+emptybunches.getText().toString()+"/"
                 +longstalk.getText().toString()+"/"+mediumstalk.getText().toString()+"/"+shortstalk.getText().toString()+"/"+
-                optimum.getText().toString()+"/"+fruitavailable+"/"+loosefruitweight.getText().toString()+"/"+rejectedBunches.getText().toString()+
+                optimum.getText().toString()+"/"+fruitavailable+"/"+fruightweight+"/"+rejectedBunches.getText().toString()+
                 "/"+gradingdoneby.getText().toString();
         String qrCodeValue = hashString;
         Log.d("qrCodeValueis", qrCodeValue  + "");

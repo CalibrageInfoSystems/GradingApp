@@ -563,7 +563,7 @@
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="Submit" />
+                    android:text="@string/submit_print" />
 
             </LinearLayout>
 

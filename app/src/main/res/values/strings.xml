@@ -3,4 +3,6 @@
 
     <string name="has_paired">Paired</string>
     <string name="not_paired">Not Paired</string>
+
+    <string name="submit_print">Submit &amp; Print</string>
 </resources>
