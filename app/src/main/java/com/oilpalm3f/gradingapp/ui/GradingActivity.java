@@ -127,19 +127,19 @@ public class GradingActivity extends AppCompatActivity {
             Log.d("QR Code Value is", qrvalue + "");
         }
 
-      String[] splitString = qrvalue.split("/");
+//      String[] splitString = qrvalue.split("/");
+////
+//        Log.d("String1", splitString[0] + "");
+//        Log.d("String2", splitString[1] + "");
+//        Log.d("String3", splitString[2] + "");
+//        Log.d("String4", splitString[3] + "");
+//        Log.d("String5", splitString[4] + "");
 //
-        Log.d("String1", splitString[0] + "");
-        Log.d("String2", splitString[1] + "");
-        Log.d("String3", splitString[2] + "");
-        Log.d("String4", splitString[3] + "");
-        Log.d("String5", splitString[4] + "");
-
-        tokenNumber.setText(splitString[0] + "");
-        millcode.setText(splitString[1] + "");
-        type.setText(splitString[2] + "");
-        grossweight.setText(splitString[3] + "");
-        tokendate.setText(splitString[4] + "");
+//        tokenNumber.setText(splitString[0] + "");
+//        millcode.setText(splitString[1] + "");
+//        type.setText(splitString[2] + "");
+//        grossweight.setText(splitString[3] + "");
+//        tokendate.setText(splitString[4] + "");
 
         String[] isloosefruitavailableArray = getResources().getStringArray(R.array.yesOrNo_values);
         List<String> isloosefruitavailableList = Arrays.asList(isloosefruitavailableArray);
@@ -191,11 +191,17 @@ public class GradingActivity extends AppCompatActivity {
                     List<LinkedHashMap> details = new ArrayList<>();
                     LinkedHashMap map = new LinkedHashMap();
 
-                    map.put("TokenNumber", splitString[0] + "");
-                    map.put("CCCode", splitString[1] + "");
-                    map.put("FruitType", splitString[2] + "");
-                    map.put("GrossWeight", splitString[3] + "");
-                    map.put("TokenDate", splitString[4] + "");
+                    map.put("TokenNumber", "1234");
+                    map.put("CCCode", "CCGVG01");
+                    map.put("FruitType",  "CType");
+                    map.put("GrossWeight", "120");
+                    map.put("TokenDate",  "2021-08-19T15:44:54.527");
+
+//                    map.put("TokenNumber", splitString[0] + "");
+//                    map.put("CCCode", splitString[1] + "");
+//                    map.put("FruitType", splitString[2] + "");
+//                    map.put("GrossWeight", splitString[3] + "");
+//                    map.put("TokenDate", splitString[4] + "");
 
                     map.put("UnRipen", Integer.parseInt(unripen.getText().toString()));
                     map.put("UnderRipe", Integer.parseInt(underripe.getText().toString()));
@@ -423,7 +429,7 @@ public class GradingActivity extends AppCompatActivity {
         /* So pre-scale the target bitmap into which the file is decoded */
 
 
-        
+
         /* Get the size of the ImageView */
         int targetW = slipImage.getWidth();
         int targetH = slipImage.getHeight();

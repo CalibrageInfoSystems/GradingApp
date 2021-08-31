@@ -1,10 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.GradingReportActivity"
-    android:background="@color/black">
+    android:orientation="vertical"
+    android:layout_marginTop="?attr/actionBarSize">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include layout="@layout/date_filter_layout">
+
+    </include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="10dp">
+        <TextView
+            style="@style/header_h1_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="Total Net weight : " />
+        <TextView
+            style="@style/header_h1_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/totalNetWeightSum"
+            android:text="0 Kgs" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/grading_reports_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        android:divider="@color/gray"
+        android:dividerHeight="1px">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/no_records"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="No Records found"
+        android:textSize="50dp"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+</LinearLayout>

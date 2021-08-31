@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.oilpalm3f.gradingapp.cloudhelper.Log;
+import com.oilpalm3f.gradingapp.ui.GradingActivity;
 import com.oilpalm3f.gradingapp.ui.GradingReportActivity;
 import com.oilpalm3f.gradingapp.ui.QRScanActivity;
 import com.oilpalm3f.gradingapp.ui.RefreshSyncActivity;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent scanintent = new Intent(MainActivity.this, QRScanActivity.class);
+                Intent scanintent = new Intent(MainActivity.this, GradingActivity.class);
                 startActivity(scanintent);
             }
         });

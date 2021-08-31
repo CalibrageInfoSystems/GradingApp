@@ -14,6 +14,7 @@ import com.oilpalm3f.gradingapp.FaLogTracking.LocationTracker;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.dbmodels.GradingFileRepository;
+import com.oilpalm3f.gradingapp.dbmodels.GradingReportModel;
 import com.oilpalm3f.gradingapp.dbmodels.UserDetails;
 
 import org.apache.commons.lang3.StringUtils;
@@ -808,6 +809,56 @@ public class DataAccessHandler <T> {
 
 
 
+    public void getGradingReportDetails(final String query, final ApplicationThread.OnComplete onComplete) {
+        List<GradingReportModel> gradingReportDetails = new ArrayList<>();
+        Cursor cursor = null;
+//        String query = Queries.getInstance().getCollectionReportDetails();
+        Log.v(LOG_TAG, "@@@@ collection reports query " + query);
+        try {
+            cursor = mDatabase.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+
+                do {
+
+                    GradingReportModel grading_details = new GradingReportModel();
+                    grading_details.setTokenNumber(cursor.getString(cursor.getColumnIndex("TokenNumber")));
+                    grading_details.setCCCode(cursor.getString(cursor.getColumnIndex("CCCode")));
+                    grading_details.setFruitType(cursor.getString(cursor.getColumnIndex("FruitType")));
+                    grading_details.setGrossWeight(cursor.getString(cursor.getColumnIndex("GrossWeight")));
+                    grading_details.setTokenDate(cursor.getString(cursor.getColumnIndex("TokenDate")));
+                    grading_details.setGrossWeight(cursor.getString(cursor.getColumnIndex("GrossWeight")));
+                    grading_details.setUnRipen(cursor.getInt(cursor.getColumnIndex("UnRipen")));
+                    grading_details.setUnderRipe(cursor.getInt(cursor.getColumnIndex("UnderRipe")));
+                    grading_details.setRipen(cursor.getInt(cursor.getColumnIndex("Ripen")));
+                    grading_details.setOverRipe(cursor.getInt(cursor.getColumnIndex("OverRipe")));
+                    grading_details.setDiseased(cursor.getInt(cursor.getColumnIndex("Diseased")));
+                    grading_details.setEmptyBunches(cursor.getInt(cursor.getColumnIndex("EmptyBunches")));
+                    grading_details.setFFBQualityLong(cursor.getInt(cursor.getColumnIndex("FFBQualityLong")));
+                    grading_details.setFFBQualityMedium(cursor.getInt(cursor.getColumnIndex("FFBQualityMedium")));
+                    grading_details.setFFBQualityShort(cursor.getInt(cursor.getColumnIndex("FFBQualityShort")));
+                    grading_details.setFFBQualityOptimum(cursor.getInt(cursor.getColumnIndex("FFBQualityOptimum")));
+                    grading_details.setLooseFruit(cursor.getString(cursor.getColumnIndex("LooseFruit")));
+                  grading_details.setLooseFruitWeight(cursor.getString(cursor.getColumnIndex("LooseFruitWeight")));
+                    grading_details.setGraderName(cursor.getString(cursor.getColumnIndex("GraderName")));
+                    grading_details.setRejectedBunches(cursor.getInt(cursor.getColumnIndex("RejectedBunches")));
+
+                    gradingReportDetails.add(grading_details);
+                } while (cursor.moveToNext());
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            closeDataBase();
+
+            onComplete.execute(true, gradingReportDetails, "getting data");
+        }
+    }
 
 
 

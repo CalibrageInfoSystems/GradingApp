@@ -1,5 +1,7 @@
 package com.oilpalm3f.gradingapp.database;
 
+import android.text.TextUtils;
+
 import com.oilpalm3f.gradingapp.common.CommonConstants;
 
 public class Queries {
@@ -1440,5 +1442,14 @@ public class Queries {
     public String getPerOfTree(int typeID,String des)
     {
         return "select TypeCdId from TypeCdDmt where ClassTypeId = '"+typeID+"' and Desc = '"+des+"'";
+    }
+
+
+
+    public String getGradingReports(final String fromDate, final String toDate) {
+        String  stquery="select TokenNumber, CCCode, FruitType, GrossWeight, TokenDate, UnRipen, UnderRipe, Ripen, OverRipe, Diseased, EmptyBunches, FFBQualityLong, FFBQualityMedium, FFBQualityShort, FFBQualityOptimum, LooseFruit, LooseFruitWeight, GraderName, RejectedBunches, CreatedByUserId,DATE(substr(CreatedDate, 0, INSTR(CreatedDate, ' ') + 1)) " +
+                "date  from FFBGrading where date between '"+fromDate+"' and '"+toDate+"'";
+
+        return stquery;
     }
 }

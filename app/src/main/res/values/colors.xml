@@ -14,5 +14,6 @@
     <color name="header_txt">#000000</color>
     <color name="red">#FFC93437</color>
     <color name="gray">#a6a6a6</color>
+    <color name="text_dark_gray">#585858</color>
 
 </resources>
