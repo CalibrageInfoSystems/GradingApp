@@ -105,7 +105,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             else {
             holder.learemptybunches.setVisibility(View.GONE);
         }
-        if (item.getFFBQualityLong()!= 0){
+        if (item.getFFBQualityLong()!=0){
         holder.tvffbqualitylong.setText(""+item.getFFBQualityLong());}
         else{
             holder.linearffbqualitylong.setVisibility(View.GONE);
