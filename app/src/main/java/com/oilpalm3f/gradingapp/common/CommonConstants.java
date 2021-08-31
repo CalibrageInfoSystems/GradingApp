@@ -198,6 +198,8 @@ public class CommonConstants {
     public static int Crop_Maintenance_Plantation_Category = 239;
     public static int Crop_Maintenance_No_fo_trees = 240;
 
+    public static String PrinterName="";
+
     public static String SyncTableName = "Table";
 
 

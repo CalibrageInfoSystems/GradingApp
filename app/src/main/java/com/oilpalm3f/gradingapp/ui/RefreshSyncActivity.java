@@ -46,6 +46,8 @@ public class RefreshSyncActivity extends AppCompatActivity {
         btnsend = findViewById(R.id.btsynctoserver);
         btnmastersync = findViewById(R.id.btnmastersync);
 
+        bindData();
+
 
         btnmastersync.setOnClickListener(new View.OnClickListener() {
             @Override
