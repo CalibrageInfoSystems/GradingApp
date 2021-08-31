@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent scanintent = new Intent(MainActivity.this, GradingActivity.class);
+                Intent scanintent = new Intent(MainActivity.this, QRScanActivity.class);
                 startActivity(scanintent);
             }
         });
