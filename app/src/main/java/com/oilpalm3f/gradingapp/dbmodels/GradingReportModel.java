@@ -22,6 +22,15 @@ public class GradingReportModel {
     private String LooseFruitWeight;
     private String GraderName;
     private int RejectedBunches;
+    private boolean expanded;
+
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
 
     public int getId() {
         return Id;

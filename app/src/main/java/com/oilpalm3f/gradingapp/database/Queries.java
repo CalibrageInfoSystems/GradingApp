@@ -1455,4 +1455,9 @@ public class Queries {
 
         return stquery;
     }
+
+
+    public String getImageQuery(String tokenNumber) {
+        return "select FileLocation from FFBGradingRepository where TokenNumber = '" + tokenNumber + "'";
+    }
 }

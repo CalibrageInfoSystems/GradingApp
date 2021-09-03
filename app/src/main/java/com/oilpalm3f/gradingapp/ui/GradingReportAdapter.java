@@ -1,6 +1,9 @@
 package com.oilpalm3f.gradingapp.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +13,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
+import com.oilpalm3f.gradingapp.database.Queries;
 import com.oilpalm3f.gradingapp.dbmodels.GradingReportModel;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +41,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
    private onPrintOptionSelected onPrintSelected;
     SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat output = new SimpleDateFormat("dd/MM/yyyy");
+    int row_index = -1;
+    LayoutInflater mInflater;
     public GradingReportAdapter(Context context) {
         this.context = context;
         mList = new ArrayList<>();
@@ -70,76 +80,33 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
-       if(item.getUnRipen() != 0){
-        holder.tvunripen.setText(item.getUnRipen()+"");}
-       else{
-           holder.linearunripen.setVisibility(View.GONE);}
-
-           if(item.getUnderRipe()!=0 ){
-               holder.tvunderripe.setText(item.getUnderRipe()+"");
-           }
-      else{
-               holder.linearunderripe.setVisibility(View.GONE);
-           }
-        if (item.getRipen() != 0) {
-            holder.tvripen.setText(item.getRipen()+"");
+        if( holder.sublinear.getVisibility() == View.VISIBLE) {
+            holder.image_less.setVisibility(View.VISIBLE);
+            holder.image_more.setVisibility(View.GONE);
         }
         else {
-            holder.linearripen.setVisibility(View.GONE);
+            holder.image_less.setVisibility(View.GONE);
+            holder.image_more.setVisibility(View.VISIBLE);
         }
-        if(item.getOverRipe()!= 0){
-       holder.tvoverripen.setText(item.getOverRipe()+"");}
-        else{
-            holder.linearoverripe.setVisibility(View.GONE);}
-        if (item.getDiseased()!=0)
+
+
+        if(row_index== position)
         {
-       holder.tvdiseased.setText(item.getDiseased()+"");}
-        else {
-            holder.lineardiseased.setVisibility(View.GONE);
-        }
-        if (item.getEmptyBunches()!=0){
-        holder.tvemptybunches.setText(item.getEmptyBunches()+"");}
-            else {
-            holder.learemptybunches.setVisibility(View.GONE);
-        }
-        if (item.getFFBQualityLong()!=0){
-        holder.tvffbqualitylong.setText(""+item.getFFBQualityLong());}
-        else{
-            holder.linearffbqualitylong.setVisibility(View.GONE);
-        }
-        if(item.getFFBQualityMedium()!=0){
-            holder.tvffbqualitymedium.setText(item.getFFBQualityMedium()+"");
-        }
-       else{
-            holder.linearffbqualitymedium.setVisibility(View.GONE);
+            holder.sublinear.setVisibility(View.VISIBLE);
+            holder.image_less.setVisibility(View.VISIBLE);
+            holder.image_more.setVisibility(View.GONE);
+            holder.bind(item);
+            // holder.createdDateTextView.setVisibility(View.VISIBLE);
 
-        }
-       if(item.getFFBQualityShort()!=0){
-        holder.tvffbqualityshort.setText(item.getFFBQualityShort()+"");}
-       else{
-           holder.linearffbqualityshort.setVisibility(View.GONE);
-       }
-       if (item.getFFBQualityOptimum()!=0){
-        holder.tvffbqualityoptium.setText(item.getFFBQualityOptimum()+"");}
-       else{
-           holder.linearffbqualityoptimum.setVisibility(View.GONE);
-       }
-
-        if(item.getLooseFruitWeight()!= null  ){
-        holder.tvloosefruitweight.setText(item.getLooseFruitWeight()+"");}
-        else{
-            holder.linearloosefruitweight.setVisibility(View.GONE);
+        }else{
+            holder.sublinear.setVisibility(View.GONE);
+            holder.image_more.setVisibility(View.VISIBLE);
+            holder.image_less.setVisibility(View.GONE);
+            //  holder.createdDateTextView.setVisibility(View.GONE);
         }
 
-        holder.tvgradername.setText(item.getGraderName()+"");
 
-        if(item.getRejectedBunches()!= 0)
-        holder.tvrejectedbunches.setText(item.getRejectedBunches()+"");
-        else{
-           // holder.r.setVisibility(View.GONE);
-        }
+
 
         holder.printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +114,64 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
                 if (null != onPrintSelected) {
                     onPrintSelected.printOptionSelected(position);
                 }
+            }
+        });
+        holder.viewimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            //    Context context=context.getApplicationContext();
+                mInflater = LayoutInflater.from(context);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+                View mView =mInflater.inflate(R.layout.dialog_custom_layout, null);
+                //  Picasso.with(mContext).load(getCollectionInfoById.getResult().getReceiptImg()).error(R.drawable.ic_user).into(photoView);
+                PhotoView photoView = mView.findViewById(R.id.imageView);
+                TextView cancel =mView.findViewById(R.id.cancel);
+
+                String imagelocation = dataAccessHandler.getOnlyOneValueFromDb(Queries.getInstance().getImageQuery(item.getTokenNumber()));
+
+                Log.e("===============", "======imagelocation======" +imagelocation);
+
+                File imgFile = new File(imagelocation);
+
+                if(imgFile.exists()){
+
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+
+                    photoView.setImageBitmap(myBitmap);}
+
+
+//                if(imagelocation!=null)
+//                    Picasso.with(context).load(imagelocation).error(R.drawable.gallery).placeholder( R.drawable.progress_animation).into(photoView);
+//                    //  Picasso.with(mContext).load(getCollectionInfoById.getResult().getReceiptImg()).error(R.drawable.ic_user).into(photoView);
+//                else
+//                    Picasso.with(context).load(R.drawable.gallery).error(R.drawable.ico_btn_photo).placeholder( R.drawable.progress_animation).into(photoView);
+//                //photoView.setImageResource(Integer.parseInt(getCollectionInfoById.getResult().getReceiptImg()));
+                mBuilder.setView(mView);
+
+
+                final AlertDialog mDialog = mBuilder.create();
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mDialog.dismiss();
+                    }
+                });
+                mDialog.show();
+            }
+
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean expanded = item.isExpanded();
+                item.setExpanded(!expanded);
+                //  notifyItemChanged(position);
+                int oldindex=  row_index;
+                row_index = position;
+                notifyItemChanged(oldindex);
+                notifyItemChanged(position);
             }
         });
     }
@@ -175,8 +200,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         private TextView tvdiseased,tvemptybunches,tvffbqualitylong,tvffbqualitymedium,tvffbqualityshort,tvffbqualityoptium,tvloosefruit,tvloosefruitweight,tvgradername,tvrejectedbunches;
         private ImageView printBtn;
         private LinearLayout linearunripen,linearunderripe,linearripen,linearoverripe,lineardiseased,learemptybunches,linearffbqualitylong,linearffbqualitymedium,linearffbqualityshort,linearffbqualityoptimum,
-                linearloosefruit,linearloosefruitweight,lineargradername;
-
+                linearloosefruit,linearloosefruitweight,lineargradername,sublinear;
+        public ImageView image_less,image_more,viewimage;
         public CollectionReportViewHolder(View view) {
             super(view);
             tvtokennumber = (TextView) view.findViewById(R.id.tvtokennumber);
@@ -190,7 +215,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             tvoverripen = (TextView) view.findViewById(R.id.tvoverripen);
             tvdiseased = (TextView) view.findViewById(R.id.tvdiseased);
             tvemptybunches =(TextView)view.findViewById(R.id.tvemptybunches);
-            printBtn = (ImageView) view.findViewById(R.id.printBtn);
+           printBtn = (ImageView) view.findViewById(R.id.printBtn);
             tvffbqualitylong = (TextView)view.findViewById(R.id.tvffbqualitylong);
             tvffbqualitymedium =(TextView)view.findViewById(R.id.tvffbqualitymedium);
             tvffbqualityshort =(TextView)view.findViewById(R.id.tvffbqualityshort);
@@ -213,8 +238,95 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             linearloosefruit = (LinearLayout)view.findViewById(R.id.linearloosefruit);
             linearloosefruitweight = (LinearLayout)view.findViewById(R.id.linearloosefruitweight);
             lineargradername = (LinearLayout)view.findViewById(R.id.lineargradername);
+            sublinear =(LinearLayout)view.findViewById(R.id.sublinear);
+            image_less =view.findViewById(R.id.image_less);
+            image_more =view.findViewById(R.id.image_more);
+            viewimage = view.findViewById(R.id.viewimage);
 
 
+        }
+
+        public void bind(GradingReportModel item) {
+
+            boolean expanded = item.isExpanded();
+
+            sublinear.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            if(item.getUnRipen() != 0){
+                tvunripen.setText(item.getUnRipen()+"");}
+            else{
+                linearunripen.setVisibility(View.GONE);}
+
+            if(item.getUnderRipe()!=0 ){
+                tvunderripe.setText(item.getUnderRipe()+"");
+            }
+            else{
+                linearunderripe.setVisibility(View.GONE);
+            }
+            if (item.getRipen() != 0) {
+                tvripen.setText(item.getRipen()+"");
+            }
+            else {
+                linearripen.setVisibility(View.GONE);
+            }
+            if(item.getOverRipe()!= 0){
+                tvoverripen.setText(item.getOverRipe()+"");}
+            else{
+                linearoverripe.setVisibility(View.GONE);}
+            if (item.getDiseased()!=0)
+            {
+                tvdiseased.setText(item.getDiseased()+"");}
+            else {
+                lineardiseased.setVisibility(View.GONE);
+            }
+            if (item.getEmptyBunches()!=0){
+                tvemptybunches.setText(item.getEmptyBunches()+"");}
+            else {
+                learemptybunches.setVisibility(View.GONE);
+            }
+            if (item.getFFBQualityLong()!=0){
+                tvffbqualitylong.setText(""+item.getFFBQualityLong());}
+            else{
+                linearffbqualitylong.setVisibility(View.GONE);
+            }
+            if(item.getFFBQualityMedium()!=0){
+                tvffbqualitymedium.setText(item.getFFBQualityMedium()+"");
+            }
+            else{
+                linearffbqualitymedium.setVisibility(View.GONE);
+
+            }
+            if(item.getFFBQualityShort()!=0){
+                tvffbqualityshort.setText(item.getFFBQualityShort()+"");}
+            else{
+                linearffbqualityshort.setVisibility(View.GONE);
+            }
+            if (item.getFFBQualityOptimum()!=0){
+                tvffbqualityoptium.setText(item.getFFBQualityOptimum()+"");}
+            else{
+                linearffbqualityoptimum.setVisibility(View.GONE);
+            }
+
+            if(item.getLooseFruitWeight()!= null  ){
+                tvloosefruitweight.setText(item.getLooseFruitWeight()+"");}
+            else{
+                linearloosefruitweight.setVisibility(View.GONE);
+            }
+
+            tvgradername.setText(item.getGraderName()+"");
+
+            if(item.getRejectedBunches()!= 0)
+                tvrejectedbunches.setText(item.getRejectedBunches()+"");
+            else{
+                // holder.r.setVisibility(View.GONE);
+            }
+            if( sublinear.getVisibility() == View.VISIBLE) {
+                image_less.setVisibility(View.VISIBLE);
+                image_more.setVisibility(View.GONE);
+            }
+            else {
+                image_less.setVisibility(View.GONE);
+                image_more.setVisibility(View.VISIBLE);
+            }
         }
     }
 
