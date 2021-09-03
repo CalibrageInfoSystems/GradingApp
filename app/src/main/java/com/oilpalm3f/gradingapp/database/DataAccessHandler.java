@@ -932,16 +932,25 @@ public class DataAccessHandler <T> {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     mgradingrepository = new GradingFileRepository();
-                    mgradingrepository.setTokenNumber(cursor.getString(1));
-                    mgradingrepository.setCCCode(cursor.getString(2));
-                    mgradingrepository.setFruitType(cursor.getInt(3));
-                    mgradingrepository.setGrossWeight(cursor.getDouble(4));
-                    mgradingrepository.setFileName(cursor.getString(5));
-                    mgradingrepository.setFileLocation(cursor.getString(6));
-                    mgradingrepository.setFileExtension(cursor.getString(7));
-                    mgradingrepository.setTokenNumber(cursor.getString(8));
-                    mgradingrepository.setCreatedByUserId(cursor.getInt(9));
-                    mgradingrepository.setCreatedDate(cursor.getString(10));
+
+                    String filelocation = cursor.getString(cursor.getColumnIndex("FileLocation"));
+                    if(filelocation != null){
+                        try{
+                            mgradingrepository.setImageString(CommonUtils.encodeFileToBase64Binary(new File(filelocation)));
+                        }catch (Exception exc){
+
+                        }
+                    }
+
+                    mgradingrepository.setTokenNumber(cursor.getString(cursor.getColumnIndex("TokenNumber")));
+                    mgradingrepository.setCCCode(cursor.getString(cursor.getColumnIndex("CCCode")));
+                    mgradingrepository.setFruitType(cursor.getInt(cursor.getColumnIndex("FruitType")));
+                    mgradingrepository.setGrossWeight(cursor.getDouble(cursor.getColumnIndex("GrossWeight")));
+                    mgradingrepository.setFileName(cursor.getString(cursor.getColumnIndex("FileName")));
+                    mgradingrepository.setFileLocation(cursor.getString(cursor.getColumnIndex("FileLocation")));
+                    mgradingrepository.setFileExtension(cursor.getString(cursor.getColumnIndex("FileExtension")));
+                    mgradingrepository.setCreatedByUserId(cursor.getInt(cursor.getColumnIndex("CreatedByUserId")));
+                    mgradingrepository.setCreatedDate(cursor.getString(cursor.getColumnIndex("CreatedDate")));
                     mgradingrepository.setServerUpdatedStatus(0);
                     if (type == 1) {
                         gradingrepolist.add(mgradingrepository);

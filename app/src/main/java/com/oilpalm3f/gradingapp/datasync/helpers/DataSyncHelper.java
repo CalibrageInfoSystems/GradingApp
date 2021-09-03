@@ -168,7 +168,7 @@ public class DataSyncHelper {
                                 Set<String> transDataTableNames = transDataMap.keySet();
                                 refreshtableNamesList.addAll(transDataTableNames);
                                 refreshtransactionsDataMap = transDataMap;
-                                sendTrackingData(context, onComplete);
+                               // sendTrackingData(context, onComplete);
                                 postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
                             }
                         } else {
@@ -193,15 +193,17 @@ public class DataSyncHelper {
             Gson gson = new GsonBuilder().serializeNulls().create();
 
             String dat = gson.toJson(cctransDataList, listType);
-            JSONObject transObj = new JSONObject();
+            JSONArray transObj = new JSONArray();
             try {
-                transObj.put(tableName, new JSONArray(dat));
+                //transObj.put(tableName, new JSONArray(dat));
+                transObj = new JSONArray(dat);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             Log.v(LOG_TAG, "@@@@ check.." + transObj.toString());
+            Log.v(LOG_TAG, "@@@@ checkkkkk.." + transObj.length());
             CommonConstants.SyncTableName = tableName;
-            CloudDataHandler.placeDataInCloud(context, transObj, Config.live_url + Config.transactionSyncURL, new ApplicationThread.OnComplete<String>() {
+            CloudDataHandler.placeDataInCloudd(context, transObj, Config.live_url + Config.transactionSyncURL, new ApplicationThread.OnComplete<String>() {
                 @Override
                 public void execute(boolean success, String result, String msg) {
                     if (success) {
@@ -249,9 +251,9 @@ public class DataSyncHelper {
 //                if (null != imagesData && !imagesData.isEmpty()) {
 //                    sendImageDetails(context, imagesData, dataAccessHandler, onComplete);
 //                } else {
-//                    ProgressBar.hideProgressBar();
-//                    onComplete.execute(true, null, "Sync is success");
-//                    Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
+                    ProgressBar.hideProgressBar();
+                    onComplete.execute(true, null, "Sync is success");
+                    Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
 //
 //                }
             } else {

@@ -1,6 +1,7 @@
 package com.oilpalm3f.gradingapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +63,11 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grading_report);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Grading Reports");
+        setSupportActionBar(toolbar);
+
         dataAccessHandler = new DataAccessHandler(this);
         initUI();
 
