@@ -21,8 +21,19 @@ public class GradingReportModel {
     private String LooseFruit;
     private String LooseFruitWeight;
     private String GraderName;
+
+    public int getRejectedBunches() {
+        return RejectedBunches;
+    }
+
+    public void setRejectedBunches(int rejectedBunches) {
+        RejectedBunches = rejectedBunches;
+    }
+
     private int RejectedBunches;
     private boolean expanded;
+
+    private String CreatedDate;
 
     public boolean isExpanded() {
         return expanded;
@@ -30,6 +41,16 @@ public class GradingReportModel {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
+
+    }
+
+    public String getCreatedDate() {
+        return CreatedDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        CreatedDate = createdDate;
+
     }
 
     public int getId() {
@@ -168,13 +189,7 @@ public class GradingReportModel {
         GraderName = graderName;
     }
 
-    public int getRejectedBunches() {
-        return RejectedBunches;
-    }
 
-    public void setRejectedBunches(int rejectedBunches) {
-        RejectedBunches = rejectedBunches;
-    }
 
     public int getRipen() {
         return Ripen;

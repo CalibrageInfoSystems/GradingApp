@@ -64,15 +64,24 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         if (item == null)
             return;
 
+        String fruitType;
+
+        if (item.getFruitType().equalsIgnoreCase("01")){
+
+            fruitType = "Collection";
+        }else{
+            fruitType = "Consignment";
+        }
+
         holder.tvtokennumber.setText(item.getTokenNumber().trim());
         holder.tv_cccode.setText(item.getCCCode().trim());
-       holder.tvFruitType.setText(item.getFruitType().trim());
+       holder.tvFruitType.setText(fruitType);
         holder.tvgrossweight.setText(item.getGrossWeight().trim() + " " );
 //        String plotCodes = TextUtils.join(", ",dataAccessHandler.getListOfCodes(Queries.getInstance().getPlotCodes(item.getCode())).toArray());
 
 
         try {
-            Date oneWayTripDate = input.parse(item.getTokenDate());
+            Date oneWayTripDate = input.parse(item.getCreatedDate());
           String  datetimevaluereq = output.format(oneWayTripDate);
             holder.tvtokendate.setText(datetimevaluereq);
 
@@ -106,6 +115,12 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         }
 
 
+
+        if(item.getRejectedBunches()!= 0)
+        holder.tvrejectedbunches.setText(item.getRejectedBunches()+"");
+        else{
+            holder.linearrejectedbunches.setVisibility(View.GONE);
+        }
 
 
         holder.printBtn.setOnClickListener(new View.OnClickListener() {
@@ -200,8 +215,13 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         private TextView tvdiseased,tvemptybunches,tvffbqualitylong,tvffbqualitymedium,tvffbqualityshort,tvffbqualityoptium,tvloosefruit,tvloosefruitweight,tvgradername,tvrejectedbunches;
         private ImageView printBtn;
         private LinearLayout linearunripen,linearunderripe,linearripen,linearoverripe,lineardiseased,learemptybunches,linearffbqualitylong,linearffbqualitymedium,linearffbqualityshort,linearffbqualityoptimum,
-                linearloosefruit,linearloosefruitweight,lineargradername,sublinear;
+
+                linearloosefruit,linearloosefruitweight,lineargradername,sublinear,linearrejectedbunches;
         public ImageView image_less,image_more,viewimage;
+
+
+
+
         public CollectionReportViewHolder(View view) {
             super(view);
             tvtokennumber = (TextView) view.findViewById(R.id.tvtokennumber);
@@ -238,17 +258,21 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             linearloosefruit = (LinearLayout)view.findViewById(R.id.linearloosefruit);
             linearloosefruitweight = (LinearLayout)view.findViewById(R.id.linearloosefruitweight);
             lineargradername = (LinearLayout)view.findViewById(R.id.lineargradername);
+
             sublinear =(LinearLayout)view.findViewById(R.id.sublinear);
             image_less =view.findViewById(R.id.image_less);
             image_more =view.findViewById(R.id.image_more);
             viewimage = view.findViewById(R.id.viewimage);
 
-
+            linearrejectedbunches = (LinearLayout)view.findViewById(R.id.linearrejectedbunches);
         }
 
         public void bind(GradingReportModel item) {
 
             boolean expanded = item.isExpanded();
+
+
+
 
             sublinear.setVisibility(expanded ? View.VISIBLE : View.GONE);
             if(item.getUnRipen() != 0){

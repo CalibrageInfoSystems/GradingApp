@@ -172,7 +172,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="TokenDate"
+                        android:text="Grading Date"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -596,6 +596,7 @@
 
 
                     <TextView
+
                         android:id="@+id/tvgradername"
                         style="@style/header_h1_text_title_list_item"
                         android:layout_width="0dp"
@@ -605,6 +606,7 @@
                         android:textColor="@color/text_dark_gray" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/linearrejectedbunches"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
