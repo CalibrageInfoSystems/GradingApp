@@ -133,7 +133,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TokenDate" />
+                    android:text="Token Date" />
 
                 <TextView
                     android:id="@+id/tokendate"
@@ -472,7 +472,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
-                    android:text="Rejected Bunches*" />
+                    android:text="Rejected Bunches" />
 
                 <EditText
                     android:id="@+id/rejectedbunches"

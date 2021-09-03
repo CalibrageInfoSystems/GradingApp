@@ -2,6 +2,8 @@ package com.oilpalm3f.gradingapp.dbmodels;
 
 public class GradingFileRepository {
 
+    private int Id;
+    private String ImageString;
     private String TokenNumber;
     private String CCCode;
     private int FruitType;
@@ -12,6 +14,22 @@ public class GradingFileRepository {
     private int CreatedByUserId;
     private String CreatedDate;
     private int ServerUpdatedStatus;
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public String getImageString() {
+        return ImageString;
+    }
+
+    public void setImageString(String imageString) {
+        ImageString = imageString;
+    }
 
     public String getTokenNumber() {
         return TokenNumber;

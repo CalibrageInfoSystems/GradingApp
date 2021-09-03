@@ -1,5 +1,7 @@
 package com.oilpalm3f.gradingapp.ui;
 
+import static android.util.Base64.encodeToString;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -8,18 +10,25 @@ import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,6 +49,7 @@ import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.common.InputFilterMinMax;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
+import com.oilpalm3f.gradingapp.database.Queries;
 import com.oilpalm3f.gradingapp.printer.BluetoothDevicesFragment;
 import com.oilpalm3f.gradingapp.printer.PrinterChooserFragment;
 import com.oilpalm3f.gradingapp.printer.UsbDevicesListFragment;
@@ -73,6 +83,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
     LinearLayout loosefruitweightLL;
 
     String[] splitString;
+    String firsteight;
+    String fruitType;
+
+    String somestring = "202109021331";
+    int tokenexists;
     
     private DataAccessHandler dataAccessHandler;
     private ImageView slipImage, slipIcon;
@@ -95,6 +110,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         setSupportActionBar(toolbar);
 
         dataAccessHandler = new DataAccessHandler(GradingActivity.this);
+
+        //Log.d("FirstEight",firstEight(somestring));
+
+
+
 
 
         tokenNumber = findViewById(R.id.tokenNumber);
@@ -146,14 +166,38 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         Log.d("String2", splitString[1] + "");
         Log.d("String3", splitString[2] + "");
         Log.d("String4", splitString[3] + "");
-        Log.d("String5", splitString[4] + "");
+        //Log.d("String5", splitString[4] + "");
+
+        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0]));
+        Log.d("tokenexists",tokenexists + "");
+
+        if (tokenexists == 1){
+
+            showDialog(GradingActivity.this, "Grading Already done for this Token");
+
+        }
+
+
+        firsteight = firstEight(splitString[0]);
+        firsteight = firsteight.substring(0, 4) + "-" + firsteight.substring(4, firsteight.length());
+        firsteight = firsteight.substring(0, 7) + "-" + firsteight.substring(7, firsteight.length());
+        Log.d("FirstEightString",firsteight);
+
+        if (splitString[2].equalsIgnoreCase("01")){
+
+            fruitType = "Collection";
+        }else{
+            fruitType = "Consignment";
+        }
+
+        Log.d("fruitType is", fruitType);
 
 
         tokenNumber.setText(splitString[0] + "");
         millcode.setText(splitString[1] + "");
-        type.setText(splitString[2] + "");
+        type.setText(fruitType);
         grossweight.setText(splitString[3] + "");
-        tokendate.setText(splitString[4] + "");
+        tokendate.setText(firsteight + "");
 
         String[] isloosefruitavailableArray = getResources().getStringArray(R.array.yesOrNo_values);
         List<String> isloosefruitavailableList = Arrays.asList(isloosefruitavailableArray);
@@ -197,15 +241,27 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         });
 
         submit.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 if (validate()){
-                   // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
+
+                    String base64String = null;
+
+                    try {
+                        Log.d("Base64String", CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath)));
+                        base64String = CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
 
 
                     List<LinkedHashMap> repodetails = new ArrayList<>();
                     LinkedHashMap maprepo = new LinkedHashMap();
 
+                    maprepo.put("ImageString", "null");
                     maprepo.put("TokenNumber", splitString[0] + "");
                     maprepo.put("CCCode", splitString[1] + "");
                     maprepo.put("FruitType", splitString[2] + "");
@@ -249,7 +305,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                     map.put("CCCode", splitString[1] + "");
                     map.put("FruitType", splitString[2] + "");
                     map.put("GrossWeight", splitString[3] + "");
-                    map.put("TokenDate", splitString[4] + "");
+                    map.put("TokenDate", firsteight + "");
 
                     map.put("UnRipen", unripen.getText().toString());
                     map.put("UnderRipe", underripe.getText().toString());
@@ -420,11 +476,6 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                 UiUtils.showCustomToastMessage("Please Enter Loose Fruit Weight", GradingActivity.this, 0);
                 return false;
             }
-        }
-
-        if (TextUtils.isEmpty(rejectedBunches.getText().toString())) {
-            UiUtils.showCustomToastMessage("Please Enter Rejected Bunches", GradingActivity.this, 0);
-            return false;
         }
 
         if (TextUtils.isEmpty(gradingdoneby.getText().toString())) {
@@ -602,7 +653,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         sb.append(" ");
         sb.append(" Gross Weight(Kgs) : ").append(splitString[3] + "").append("\n");
         sb.append(" ");
-        sb.append(" Token Date : ").append(splitString[4] + "").append("\n");
+        sb.append(" Token Date : ").append(firsteight + "").append("\n");
 
 
 
@@ -663,10 +714,13 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         if (!TextUtils.isEmpty(loosefruitweight.getText().toString())){
             sb.append(" ");
-            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(loosefruitweight.getText().toString() + "Kg").append("\n");
+            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(loosefruitweight.getText().toString() + "(Kgs)").append("\n");
         }
+
+        if (!TextUtils.isEmpty(rejectedBunches.getText().toString())) {
             sb.append(" ");
             sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString()).append("\n");
+        }
             sb.append(" ");
             sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
 
@@ -818,4 +872,37 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         mPrinter.sendByteData(printQR);
 
     }
+
+    public String firstEight(String str) {
+        return str.length() < 8 ? str : str.substring(0, 8);
+    }
+
+    public void showDialog(Activity activity, String msg) {
+        final Dialog dialog = new Dialog(activity, R.style.DialogSlideAnim);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog);
+        final ImageView img = dialog.findViewById(R.id.img_cross);
+
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        text.setText(msg);
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        dialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((Animatable) img.getDrawable()).start();
+            }
+        }, 500);
+    }
+
+
+
 }

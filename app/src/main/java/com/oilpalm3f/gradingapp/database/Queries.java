@@ -222,6 +222,9 @@ public class Queries {
     public String getcastQuery() {
         return "SELECT Typecdid,desc FROM typecddmt where classtypeid= '8' and isActive ='true'";
     }
+    public String getTokenExistQuery(String tokenNumber) {
+        return "SELECT EXISTS(SELECT 1 FROM FFBGrading WHERE TokenNumber='" + tokenNumber + "')";
+    }
 
     public String getVehicleTypeQuery() {
         return "SELECT Typecdid,desc FROM typecddmt where classtypeid= '19' and isActive ='true'";

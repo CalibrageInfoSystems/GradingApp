@@ -3,9 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/drawable/animated_vector_cross.xml" value="0.16203703703703703" />
+        <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/drawable/vector_path_cross.xml" value="0.16203703703703703" />
         <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/activity_grading.xml" value="0.25416666666666665" />
+        <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/activity_grading_report.xml" value="0.18541666666666667" />
         <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/bluetooth_device_screen.xml" value="0.25416666666666665" />
         <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/chooser_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/date_filter_layout.xml" value="0.18541666666666667" />
+        <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/dialog.xml" value="0.176" />
         <entry key="..\:/MyProjects/FFBGradingApp/app/src/main/res/layout/gradingreport_item.xml" value="0.18072916666666666" />
       </map>
     </option>

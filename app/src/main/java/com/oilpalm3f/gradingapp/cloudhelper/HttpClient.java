@@ -16,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -172,7 +173,7 @@ public class HttpClient {
                 } else {
                     final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-                    palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
+                   // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
                     Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
                     Log.pushLogToCrashlytics(postResponse);
                     Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
@@ -194,6 +195,66 @@ public class HttpClient {
             client.close();
         }
     }
+
+    public static synchronized void  postDataToServerjsonn(final Context context, final String url, final JSONArray jsonObject, final ApplicationThread.OnComplete onComplete) {
+        // check the connectivity mode
+
+        if (offline) {
+            if (null != onComplete) onComplete.execute(false, null, "not connected");
+            return;
+        }
+        Log.i("Jurl...", url);
+        Palm3FoilDatabase  palm3FoilDatabase = Palm3FoilDatabase.getPalm3FoilDatabase(context);
+        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+        final HttpPost post = new org.apache.http.client.methods.HttpPost(url);
+        try {
+            if( jsonObject != null) {
+                Log.i("Data...", "@@@ "+jsonObject.toString());
+                StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
+                //sets the post request as the resulting string
+                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                post.setEntity(entity);
+                post.setHeader("Accept", "application/json");
+                post.setHeader("Content-type", "application/json");
+//                Log.i("Json Data to server", jsonObject.toString());
+
+
+                HttpClientParams.setRedirecting(client.getParams(), true);
+
+                final HttpResponse response = client.execute(post);
+                final int statusCode = response.getStatusLine().getStatusCode();
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
+                    Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
+                    Log.v("@@postResponse",""+postResponse);
+                    if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
+                } else {
+                    final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+
+                    // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
+                    Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
+                    Log.pushLogToCrashlytics(postResponse);
+                    Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
+                    if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
+
+
+                }
+            }
+            // enable redirects
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
+            Log.e(HttpClient.class.getName(), e);
+            post.abort();
+
+            if (null != onComplete) onComplete.execute(false, null, e.getMessage());
+        } finally {
+            client.close();
+        }
+    }
+
 
     /**
      * Posting data to server
