@@ -21,7 +21,16 @@ public class GradingReportModel {
     private String LooseFruit;
     private String LooseFruitWeight;
     private String GraderName;
-    private int RejectedBunches;
+    private String RejectedBunches;
+    private String CreatedDate;
+
+    public String getCreatedDate() {
+        return CreatedDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        CreatedDate = createdDate;
+    }
 
     public int getId() {
         return Id;
@@ -159,11 +168,11 @@ public class GradingReportModel {
         GraderName = graderName;
     }
 
-    public int getRejectedBunches() {
+    public String getRejectedBunches() {
         return RejectedBunches;
     }
 
-    public void setRejectedBunches(int rejectedBunches) {
+    public void setRejectedBunches(String rejectedBunches) {
         RejectedBunches = rejectedBunches;
     }
 

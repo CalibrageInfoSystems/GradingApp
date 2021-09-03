@@ -649,11 +649,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         sb.append(" ");
         sb.append(" CCCode : ").append(splitString[1] + "").append("\n");
         sb.append(" ");
-        sb.append(" Fruit Type : ").append(splitString[2] + "").append("\n");
+        sb.append(" Fruit Type : ").append(fruitType + "").append("\n");
         sb.append(" ");
         sb.append(" Gross Weight(Kgs) : ").append(splitString[3] + "").append("\n");
         sb.append(" ");
-        sb.append(" Token Date : ").append(firsteight + "").append("\n");
+        sb.append(" Grading Date : ").append(CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_4) + "").append("\n");
 
 
 
@@ -759,17 +759,24 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
        }
 
        String fruightweight;
+       String rejectedbunches;
 
        if(TextUtils.isEmpty(loosefruitweight.getText().toString())){
-           fruightweight = "null";
+           fruightweight = "0";
        }else{
            fruightweight = loosefruitweight.getText().toString();
        }
 
-        String hashString = qrvalue+"/"+unripen.getText().toString()+"/"+underripe.getText().toString()+"/"+ripen.getText().toString()
+        if(TextUtils.isEmpty(rejectedBunches.getText().toString())){
+            rejectedbunches = "0";
+        }else{
+            rejectedbunches = rejectedBunches.getText().toString();
+        }
+
+        String hashString = qrvalue+"/"+CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMM)+"/"+unripen.getText().toString()+"/"+underripe.getText().toString()+"/"+ripen.getText().toString()
                 +"/"+overripe.getText().toString()+"/"+diseased.getText().toString()+"/"+emptybunches.getText().toString()+"/"
                 +longstalk.getText().toString()+"/"+mediumstalk.getText().toString()+"/"+shortstalk.getText().toString()+"/"+
-                optimum.getText().toString()+"/"+fruitavailable+"/"+fruightweight+"/"+rejectedBunches.getText().toString()+
+                optimum.getText().toString()+"/"+fruitavailable+"/"+fruightweight+"/"+rejectedbunches+
                 "/"+gradingdoneby.getText().toString();
         String qrCodeValue = hashString;
         Log.d("qrCodeValueis", qrCodeValue  + "");

@@ -45,6 +45,7 @@ public class CommonConstants {
     public static String DATE_FORMAT_DDMMYYYY_HHMMSS = "yyyy-MM-dd HH:mm:ss";
     public static String DATE_FORMAT_DDMMYYYY_HHMMSS_SSS ="yyyy-MM-dd HH:mm:ss.SSS";
     public static String DATE_FORMAT_1 = "dd-MM-yyyy HH:mm a";
+    public static String DATE_FORMAT_4 = "dd-MM-yyyy HH:mm";
     public static String DATE_FORMAT_2 = "dd-MM-yyyy";
     public static String DATE_FORMAT_3 = "dd/MM/yyyy";
     public static String IS_MASTER_SYNC_SUCCESS = "is_master_sync_success";

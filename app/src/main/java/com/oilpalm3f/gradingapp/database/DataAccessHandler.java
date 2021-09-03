@@ -839,7 +839,8 @@ public class DataAccessHandler <T> {
                     grading_details.setLooseFruit(cursor.getString(cursor.getColumnIndex("LooseFruit")));
                   grading_details.setLooseFruitWeight(cursor.getString(cursor.getColumnIndex("LooseFruitWeight")));
                     grading_details.setGraderName(cursor.getString(cursor.getColumnIndex("GraderName")));
-                    grading_details.setRejectedBunches(cursor.getInt(cursor.getColumnIndex("RejectedBunches")));
+                    grading_details.setRejectedBunches(cursor.getString(cursor.getColumnIndex("RejectedBunches")));
+                    grading_details.setCreatedDate(cursor.getString(cursor.getColumnIndex("date")));
 
                     gradingReportDetails.add(grading_details);
                 } while (cursor.moveToNext());
