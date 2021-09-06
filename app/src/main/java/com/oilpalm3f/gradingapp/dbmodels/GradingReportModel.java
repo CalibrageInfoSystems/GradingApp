@@ -22,18 +22,29 @@ public class GradingReportModel {
     private String LooseFruitWeight;
     private String GraderName;
 
-    public int getRejectedBunches() {
-        return RejectedBunches;
-    }
 
-    public void setRejectedBunches(int rejectedBunches) {
-        RejectedBunches = rejectedBunches;
-    }
 
-    private int RejectedBunches;
+    private String RejectedBunches;
     private boolean expanded;
 
     private String CreatedDate;
+    private String CreatedDatewithtime;
+
+    public String getCreatedDatewithtime() {
+        return CreatedDatewithtime;
+    }
+
+    public void setCreatedDatewithtime(String createdDatewithtime) {
+        CreatedDatewithtime = createdDatewithtime;
+    }
+
+    public String getRejectedBunches() {
+        return RejectedBunches;
+    }
+
+    public void setRejectedBunches(String rejectedBunches) {
+        RejectedBunches = rejectedBunches;
+    }
 
     public boolean isExpanded() {
         return expanded;

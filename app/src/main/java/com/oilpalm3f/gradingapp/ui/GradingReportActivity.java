@@ -34,6 +34,7 @@ import com.oilpalm3f.gradingapp.printer.onPrinterType;
 import com.oilpalm3f.gradingapp.uihelper.ProgressBar;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -258,8 +259,9 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
     public void printOptionSelected(int position) {
 
         selectedReport = mReportsList.get(position);
+    
 
-//        Log.d("Unripen",selectedReport.getUnRipen() + "");
+        //Log.d("CreatedDate",selectedReport.getCreatedDatewithtime() + "");
 //        Log.d("Underipe",selectedReport.getUnderRipe() + "");
 //        Log.d("Ripen",selectedReport.getRipen() + "");
 //        Log.d("Overripe",selectedReport.getOverRipe() + "");
@@ -311,6 +313,50 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
     public void printGradingData(PrinterInstance mPrinter, int printCount) {
 
+        String fruitTypeNumber;
+        String fruitType;
+        Log.d("fruitType", selectedReport.getFruitType());
+
+        if (selectedReport.getFruitType().equalsIgnoreCase("1")){
+
+            fruitTypeNumber = "01";
+        }else{
+            fruitTypeNumber = "02";
+        }
+
+        if (selectedReport.getFruitType().equalsIgnoreCase("1")){
+
+            fruitType = "Collection";
+        }else{
+            fruitType = "Consignment";
+        }
+
+        String  requiredvalue = null;
+        String  requiredvaluee = null;
+
+        SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat outputt = new SimpleDateFormat("dd-MM-yyyy");
+
+        try {
+            Date inputdate = input.parse(selectedReport.getCreatedDatewithtime());
+            requiredvalue = output.format(inputdate);
+            Log.d("inputdate", inputdate + "");
+            Log.d("requiredvalue", requiredvalue + "");
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Date inputdatee = input.parse(selectedReport.getCreatedDatewithtime());
+            requiredvaluee = outputt.format(inputdatee);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         mPrinter.init();
         StringBuilder sb = new StringBuilder();
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
@@ -330,11 +376,11 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         sb.append(" ");
         sb.append(" CCCode : ").append(selectedReport.getCCCode()).append("\n");
         sb.append(" ");
-        sb.append(" Fruit Type : ").append(selectedReport.getFruitType()).append("\n");
+        sb.append(" Fruit Type : ").append(fruitType).append("\n");
         sb.append(" ");
         sb.append(" Gross Weight(Kgs) : ").append(selectedReport.getGrossWeight()).append("\n");
         sb.append(" ");
-        sb.append(" Token Date : ").append(selectedReport.getTokenDate()).append("\n");
+        sb.append(" Grading Date : ").append(requiredvalue + "").append("\n");
 
 
 
@@ -395,10 +441,14 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
         if (!TextUtils.isEmpty(selectedReport.getLooseFruitWeight())){
             sb.append(" ");
-            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(selectedReport.getLooseFruitWeight() + "Kg").append("\n");
+            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(selectedReport.getLooseFruitWeight() + "(Kgs)").append("\n");
         }
-        sb.append(" ");
-        sb.append(" Rejected Bunches : ").append(selectedReport.getRejectedBunches()).append("\n");
+        if (!TextUtils.isEmpty(selectedReport.getRejectedBunches())){
+
+            sb.append(" ");
+            sb.append(" Rejected Bunches : ").append(selectedReport.getRejectedBunches() + "(Kgs)").append("\n");
+        }
+
         sb.append(" ");
         sb.append(" Grader Name : ").append(selectedReport.getGraderName()).append("\n");
 
@@ -436,18 +486,34 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
             fruitavailable = false;
         }
 
+//        String fruightweight;
+//
+//        if(TextUtils.isEmpty(selectedReport.getLooseFruitWeight())){
+//            fruightweight = "null";
+//        }else{
+//            fruightweight = selectedReport.getLooseFruitWeight();
+//        }
+
         String fruightweight;
+        String rejectedbunches;
 
         if(TextUtils.isEmpty(selectedReport.getLooseFruitWeight())){
-            fruightweight = "null";
+            fruightweight = "0";
         }else{
             fruightweight = selectedReport.getLooseFruitWeight();
         }
 
-        String hashString = selectedReport.getTokenNumber()+"/"+selectedReport.getCCCode()+"/"+selectedReport.getFruitType()+"/"+selectedReport.getGrossWeight()+"/"+selectedReport.getTokenDate()+"/"+selectedReport.getUnRipen()+"/"+selectedReport.getUnderRipe()
+        if(TextUtils.isEmpty(selectedReport.getRejectedBunches())){
+            rejectedbunches = "0";
+        }else{
+            rejectedbunches = selectedReport.getRejectedBunches();
+        }
+
+        String hashString = selectedReport.getTokenNumber()+"/"+selectedReport.getCCCode()+"/"+fruitTypeNumber+"/"+selectedReport.getGrossWeight()+"/"+requiredvaluee+"/"+
+                selectedReport.getUnRipen()+"/"+selectedReport.getUnderRipe()
                 +"/"+selectedReport.getRipen()+"/"+selectedReport.getOverRipe()+"/"+selectedReport.getDiseased()+"/"+selectedReport.getEmptyBunches()+"/"
                 +selectedReport.getFFBQualityLong()+"/"+selectedReport.getFFBQualityMedium()+"/"+selectedReport.getFFBQualityShort()+"/"+
-                selectedReport.getFFBQualityOptimum()+"/"+fruitavailable+"/"+fruightweight+"/"+selectedReport.getRejectedBunches()+
+                selectedReport.getFFBQualityOptimum()+"/"+fruitavailable+"/"+fruightweight+"/"+rejectedbunches+
                 "/"+selectedReport.getGraderName();
 
         String qrCodeValue = hashString;

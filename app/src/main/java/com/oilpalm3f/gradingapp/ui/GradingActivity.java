@@ -75,6 +75,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     String qrvalue;
     public TextView tokenNumber, millcode, type, grossweight,tokendate;
+    String[] splitString;
 
     EditText unripen, underripe, ripen, overripe, diseased,
             emptybunches, longstalk, mediumstalk, shortstalk, optimum,loosefruitweight, rejectedBunches,gradingdoneby;
@@ -82,7 +83,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
     Spinner isloosefruitavailable_spinner;
     LinearLayout loosefruitweightLL;
 
-    String[] splitString;
+   // String[] splitString;
     String firsteight;
     String fruitType;
 
@@ -159,59 +160,59 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             Log.d("QR Code Value is", qrvalue + "");
         }
 
-//
 
-//      String[] splitString = qrvalue.split("/");
-////
-//        Log.d("String1", splitString[0] + "");
-//        Log.d("String2", splitString[1] + "");
-//        Log.d("String3", splitString[2] + "");
-//        Log.d("String4", splitString[3] + "");
-//        Log.d("String5", splitString[4] + "");
-//
-//
-//        tokenNumber.setText(splitString[0] + "");
-//        millcode.setText(splitString[1] + "");
-//        type.setText(splitString[2] + "");
-//        grossweight.setText(splitString[3] + "");
-//        tokendate.setText(splitString[4] + "");
 
-//        Log.d("String1", splitString[0] + "");
-//        Log.d("String2", splitString[1] + "");
-//        Log.d("String3", splitString[2] + "");
-//        Log.d("String4", splitString[3] + "");
-//        //Log.d("String5", splitString[4] + "");
+      splitString = qrvalue.split("/");
 //
-//        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0]));
-//        Log.d("tokenexists",tokenexists + "");
-//
-//        if (tokenexists == 1){
-//
-//            showDialog(GradingActivity.this, "Grading Already done for this Token");
-//
-//        }
-//
-//
-//        firsteight = firstEight(splitString[0]);
-//        firsteight = firsteight.substring(0, 4) + "-" + firsteight.substring(4, firsteight.length());
-//        firsteight = firsteight.substring(0, 7) + "-" + firsteight.substring(7, firsteight.length());
-//        Log.d("FirstEightString",firsteight);
-//
-//        if (splitString[2].equalsIgnoreCase("01")){
-//
-//            fruitType = "Collection";
-//        }else{
-//            fruitType = "Consignment";
-//        }
-//
-//        Log.d("fruitType is", fruitType);
-//
-//
-//        tokenNumber.setText(splitString[0] + "");
-//        millcode.setText(splitString[1] + "");
-//        type.setText(fruitType);
-//        grossweight.setText(splitString[3] + "");
-//        tokendate.setText(firsteight + "");
+        Log.d("String1", splitString[0] + "");
+        Log.d("String2", splitString[1] + "");
+        Log.d("String3", splitString[2] + "");
+        Log.d("String4", splitString[3] + "");
+        //Log.d("String5", splitString[4] + "");
+
+
+        tokenNumber.setText(splitString[0] + "");
+        millcode.setText(splitString[1] + "");
+        type.setText(splitString[2] + "");
+        grossweight.setText(splitString[3] + "");
+       // tokendate.setText(splitString[4] + "");
+
+        Log.d("String1", splitString[0] + "");
+        Log.d("String2", splitString[1] + "");
+        Log.d("String3", splitString[2] + "");
+        Log.d("String4", splitString[3] + "");
+        //Log.d("String5", splitString[4] + "");
+
+        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0]));
+        Log.d("tokenexists",tokenexists + "");
+
+        if (tokenexists == 1){
+
+            showDialog(GradingActivity.this, "Grading Already done for this Token");
+
+        }
+
+
+        firsteight = firstEight(splitString[0]);
+        firsteight = firsteight.substring(0, 4) + "-" + firsteight.substring(4, firsteight.length());
+        firsteight = firsteight.substring(0, 7) + "-" + firsteight.substring(7, firsteight.length());
+        Log.d("FirstEightString",firsteight);
+
+        if (splitString[2].equalsIgnoreCase("01")){
+
+            fruitType = "Collection";
+        }else{
+            fruitType = "Consignment";
+        }
+
+        Log.d("fruitType is", fruitType);
+
+
+        tokenNumber.setText(splitString[0] + "");
+        millcode.setText(splitString[1] + "");
+        type.setText(fruitType);
+        grossweight.setText(splitString[3] + " (Kgs)");
+        tokendate.setText(firsteight + "");
 
 
         String[] isloosefruitavailableArray = getResources().getStringArray(R.array.yesOrNo_values);
@@ -261,14 +262,14 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             public void onClick(View v) {
                 if (validate()){
 
-                    String base64String = null;
-
-                    try {
-                        Log.d("Base64String", CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath)));
-                        base64String = CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    String base64String = null;
+//
+//                    try {
+//                        Log.d("Base64String", CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath)));
+//                        base64String = CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 
                     // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
 
@@ -281,11 +282,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 //                    maprepo.put("FruitType", splitString[2] + "");
 //                    maprepo.put("GrossWeight", splitString[3] + "");
 //                    maprepo.put("FileName", splitString[1] + "");
-                    maprepo.put("TokenNumber", "1234");
-                    maprepo.put("CCCode", "CCGVG01");
-                    maprepo.put("FruitType",  "CType");
-                    maprepo.put("GrossWeight", "120");
-                    maprepo.put("FileName",  "CCGVG01");
+//                    maprepo.put("TokenNumber", "1234");
+//                    maprepo.put("CCCode", "CCGVG01");
+//                    maprepo.put("FruitType",  "CType");
+//                    maprepo.put("GrossWeight", "120");
+//                    maprepo.put("FileName",  "CCGVG01");
 
                     maprepo.put("ImageString", "null");
                     maprepo.put("TokenNumber", splitString[0] + "");
@@ -322,19 +323,19 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                     List<LinkedHashMap> details = new ArrayList<>();
                     LinkedHashMap map = new LinkedHashMap();
 
-                    map.put("TokenNumber", "1234");
-                    map.put("CCCode", "CCGVG01");
-                    map.put("FruitType",  "CType");
-                    map.put("GrossWeight", "120");
-                    map.put("TokenDate",  "2021-08-19T15:44:54.527");
+//                    map.put("TokenNumber", "1234");
+//                    map.put("CCCode", "CCGVG01");
+//                    map.put("FruitType",  "CType");
+//                    map.put("GrossWeight", "120");
+//                    map.put("TokenDate",  "2021-08-19T15:44:54.527");
 
 
 
-//                    map.put("TokenNumber", splitString[0] + "");
-//                    map.put("CCCode", splitString[1] + "");
-//                    map.put("FruitType", splitString[2] + "");
-//                    map.put("GrossWeight", splitString[3] + "");
-//                    map.put("TokenDate", firsteight + "");
+                    map.put("TokenNumber", splitString[0] + "");
+                    map.put("CCCode", splitString[1] + "");
+                    map.put("FruitType", splitString[2] + "");
+                    map.put("GrossWeight", splitString[3] + "");
+                    map.put("TokenDate", firsteight + "");
 
 
                     map.put("UnRipen", unripen.getText().toString());
@@ -376,7 +377,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
                             if (success) {
                                 Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT COMPLETED");
-                                Toast.makeText(GradingActivity.this, "Submit Successfully", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(GradingActivity.this, "Submit Successfully", Toast.LENGTH_SHORT).show();
 
                                 FragmentManager fm = getSupportFragmentManager();
                                 PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
@@ -749,7 +750,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         if (!TextUtils.isEmpty(rejectedBunches.getText().toString())) {
             sb.append(" ");
-            sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString()).append("\n");
+            sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString() + "(Kgs)").append("\n");
         }
             sb.append(" ");
             sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
@@ -917,6 +918,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
     public void showDialog(Activity activity, String msg) {
         final Dialog dialog = new Dialog(activity, R.style.DialogSlideAnim);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog);
         final ImageView img = dialog.findViewById(R.id.img_cross);

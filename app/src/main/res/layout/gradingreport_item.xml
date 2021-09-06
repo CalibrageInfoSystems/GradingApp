@@ -29,9 +29,11 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
+                android:layout_below="@+id/printBtn"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:layout_margin="-10dp"
                 android:src="@drawable/gallery" />
 
 
@@ -61,7 +63,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="TokenNumber"
+                        android:text="Token Number"
                         android:textColor="@color/text_dark_gray" />
 
                     <TextView
@@ -71,7 +73,9 @@
                         style="@style/header_h1_text_title_list_item"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:textColor="@color/text_dark_gray" />
+                        android:textColor="@color/green"
+                        android:autoLink="web"
+                        android:linksClickable="true"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -115,7 +119,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="FruitType"
+                        android:text="Fruit Type"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -164,7 +168,7 @@
                     android:layout_margin="5dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:layout_weight="2">
+                    android:layout_weight="3">
 
                     <TextView
                         android:id="@+id/imageView5"
@@ -185,13 +189,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:textColor="@color/text_dark_gray" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-
                     android:orientation="horizontal"
                     android:layout_weight="2">
 
@@ -207,16 +211,20 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:id="@+id/image_more"
-
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_expand_more_black_24dp"></ImageView>
+                        android:src="@drawable/ic_expand_more_black_24dp">
+
+                    </ImageView>
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:visibility="gone"
                         android:layout_gravity="center"
                         android:id="@+id/image_less"
-                        android:src="@drawable/ic_expand_less_black_24dp"></ImageView>
+                        android:src="@drawable/ic_expand_less_black_24dp">
+
+                    </ImageView>
 
 
 
@@ -248,7 +256,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="UnRipen"
+                        android:text="Unripen"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -276,7 +284,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="UnderRipe"
+                        android:text="Under Ripe"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -331,7 +339,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="OverRipe"
+                        android:text="Over Ripe"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -390,7 +398,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="EmptyBunches"
+                        android:text="Empty Bunches"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -418,7 +426,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="FFBQualityLong"
+                        android:text="FFB Quality Long"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -446,7 +454,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="FFBQualityMedium"
+                        android:text="FFB Quality Medium"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -476,7 +484,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="FFBQualityShort"
+                        android:text="FFB Quality Short"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -505,7 +513,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="FFBQualityOptimum"
+                        android:text="FFB Quality Optimum"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -562,7 +570,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="LooseFruitWeight"
+                        android:text="Loose Fruit Weight"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -590,7 +598,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="GraderName"
+                        android:text="Grader Name"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -619,7 +627,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="RejectedBunches"
+                        android:text="Rejected Bunches"
                         android:textColor="@color/text_dark_gray" />
 
 
@@ -634,6 +642,12 @@
                         android:textColor="@color/text_dark_gray" />
                 </LinearLayout>
             </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/qrimage"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

@@ -1,22 +1,34 @@
 package com.oilpalm3f.gradingapp.ui;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
+import android.media.Image;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.Queries;
@@ -40,7 +52,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
     private DataAccessHandler dataAccessHandler = null;
    private onPrintOptionSelected onPrintSelected;
     SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat output = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy");
     int row_index = -1;
     LayoutInflater mInflater;
     public GradingReportAdapter(Context context) {
@@ -59,25 +71,127 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
     @Override
     public void onBindViewHolder(CollectionReportViewHolder holder, final int position) {
+
        item = mList.get(position);
 
         if (item == null)
             return;
 
         String fruitType;
+        String fruitTypeNumber;
+        boolean fruitavailable;
 
-        if (item.getFruitType().equalsIgnoreCase("01")){
+        if (item.getFruitType().equalsIgnoreCase("1")){
 
             fruitType = "Collection";
         }else{
             fruitType = "Consignment";
         }
 
+        if (mList.get(position).getFruitType().equalsIgnoreCase("1")){
+
+            fruitTypeNumber = "01";
+        }else{
+            fruitTypeNumber = "02";
+        }
+
+        if( mList.get(position).getLooseFruit().equalsIgnoreCase("1")){
+
+            fruitavailable = true;
+        }else {
+            fruitavailable = false;
+        }
+
+        String fruightweight;
+        String rejectedbunches;
+
+        if(TextUtils.isEmpty(mList.get(position).getLooseFruitWeight())){
+            fruightweight = "0";
+        }else{
+            fruightweight = mList.get(position).getLooseFruitWeight();
+        }
+
+        if(TextUtils.isEmpty(mList.get(position).getRejectedBunches())){
+            rejectedbunches = "0";
+        }else{
+            rejectedbunches = mList.get(position).getRejectedBunches();
+        }
+
+        String  requiredvaluee = null;
+
+        SimpleDateFormat inputt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat outputt = new SimpleDateFormat("dd-MM-yyyy");
+
+        try {
+            Date inputdatee = inputt.parse( mList.get(position).getCreatedDatewithtime());
+            requiredvaluee = outputt.format(inputdatee);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        String hashString = mList.get(position).getTokenNumber()+"/"+mList.get(position).getCCCode()+"/"+fruitTypeNumber+"/"+mList.get(position).getGrossWeight()+"/"+requiredvaluee+"/"+
+                mList.get(position).getUnRipen()+"/"+mList.get(position).getUnderRipe()
+                +"/"+mList.get(position).getRipen()+"/"+mList.get(position).getOverRipe()+"/"+mList.get(position).getDiseased()+"/"+mList.get(position).getEmptyBunches()+"/"
+                +mList.get(position).getFFBQualityLong()+"/"+mList.get(position).getFFBQualityMedium()+"/"+mList.get(position).getFFBQualityShort()+"/"+
+                mList.get(position).getFFBQualityOptimum()+"/"+fruitavailable+"/"+fruightweight+"/"+rejectedbunches+
+                "/"+mList.get(position).getGraderName();
+
+        holder.tvtokennumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(context, "Link Clicked", Toast.LENGTH_SHORT).show();
+                Log.d("hashString", hashString + "");
+
+                showDialog(context,hashString);
+
+//                mInflater = LayoutInflater.from(context);
+//                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+//                View mView =mInflater.inflate(R.layout.dialog_custom_layoutt, null);
+//                ImageView img = mView.findViewById(R.id.imageView);
+//                TextView cancel =mView.findViewById(R.id.cancel);
+//
+//                mBuilder.setView(mView);
+//
+//
+//                final AlertDialog mDialog = mBuilder.create();
+//                cancel.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        mDialog.dismiss();
+//                    }
+//                });
+
+//                QRCodeWriter writer = new QRCodeWriter();
+//                try {
+//                    BitMatrix bitMatrix = writer.encode(hashString, BarcodeFormat.QR_CODE, 256, 256);
+//                    int width = bitMatrix.getWidth();
+//                    int height = bitMatrix.getHeight();
+//                    Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+//                    for (int x = 0; x < width; x++) {
+//                        for (int y = 0; y < height; y++) {
+//                            bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+//                        }
+//                    }
+//                    img.setImageBitmap(bmp);
+//
+//                } catch (WriterException e) {
+//                    e.printStackTrace();
+//                }
+
+                //mDialog.show();
+
+            }
+
+        });
+
         holder.tvtokennumber.setText(item.getTokenNumber().trim());
         holder.tv_cccode.setText(item.getCCCode().trim());
        holder.tvFruitType.setText(fruitType);
-        holder.tvgrossweight.setText(item.getGrossWeight().trim() + " " );
+        holder.tvgrossweight.setText(item.getGrossWeight().trim() + " (Kgs)" );
 //        String plotCodes = TextUtils.join(", ",dataAccessHandler.getListOfCodes(Queries.getInstance().getPlotCodes(item.getCode())).toArray());
+
 
 
         try {
@@ -116,8 +230,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
 
 
-        if(item.getRejectedBunches()!= 0)
-        holder.tvrejectedbunches.setText(item.getRejectedBunches()+"");
+        if(!TextUtils.isEmpty(item.getRejectedBunches()))
+        holder.tvrejectedbunches.setText(item.getRejectedBunches()+" (Kgs)");
         else{
             holder.linearrejectedbunches.setVisibility(View.GONE);
         }
@@ -134,6 +248,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         holder.viewimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Log.d("selectedtokenNumber", mList.get(position).getTokenNumber());
             //    Context context=context.getApplicationContext();
                 mInflater = LayoutInflater.from(context);
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
@@ -142,7 +258,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
                 PhotoView photoView = mView.findViewById(R.id.imageView);
                 TextView cancel =mView.findViewById(R.id.cancel);
 
-                String imagelocation = dataAccessHandler.getOnlyOneValueFromDb(Queries.getInstance().getImageQuery(item.getTokenNumber()));
+                String imagelocation = dataAccessHandler.getOnlyOneValueFromDb(Queries.getInstance().getImageQuery(mList.get(position).getTokenNumber()));
 
                 Log.e("===============", "======imagelocation======" +imagelocation);
 
@@ -153,7 +269,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
                     Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
 
-                    photoView.setImageBitmap(myBitmap);}
+                    photoView.setImageBitmap(myBitmap);
+                }
 
 
 //                if(imagelocation!=null)
@@ -217,7 +334,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         private LinearLayout linearunripen,linearunderripe,linearripen,linearoverripe,lineardiseased,learemptybunches,linearffbqualitylong,linearffbqualitymedium,linearffbqualityshort,linearffbqualityoptimum,
 
                 linearloosefruit,linearloosefruitweight,lineargradername,sublinear,linearrejectedbunches;
-        public ImageView image_less,image_more,viewimage;
+        public ImageView image_less,image_more,viewimage, qrimage;
 
 
 
@@ -265,6 +382,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             viewimage = view.findViewById(R.id.viewimage);
 
             linearrejectedbunches = (LinearLayout)view.findViewById(R.id.linearrejectedbunches);
+
+            qrimage = view.findViewById(R.id.qrimage);
         }
 
         public void bind(GradingReportModel item) {
@@ -338,10 +457,10 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
             tvgradername.setText(item.getGraderName()+"");
 
-            if(item.getRejectedBunches()!= 0)
-                tvrejectedbunches.setText(item.getRejectedBunches()+"");
+            if(!TextUtils.isEmpty(item.getRejectedBunches()))
+                tvrejectedbunches.setText(item.getRejectedBunches()+" (Kgs)");
             else{
-                // holder.r.setVisibility(View.GONE);
+                 linearrejectedbunches.setVisibility(View.GONE);
             }
             if( sublinear.getVisibility() == View.VISIBLE) {
                 image_less.setVisibility(View.VISIBLE);
@@ -363,4 +482,41 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
     {
         return position;
     }
+
+    public void showDialog(Context context, String imgString) {
+        final Dialog dialog = new Dialog(context, R.style.DialogSlideAnim);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogg);
+        ImageView img = dialog.findViewById(R.id.imageView);
+        TextView cancel =dialog.findViewById(R.id.cancel);
+
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(imgString, BarcodeFormat.QR_CODE, 256, 256);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            img.setImageBitmap(bmp);
+
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
 }
