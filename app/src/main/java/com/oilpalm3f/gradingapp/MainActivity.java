@@ -17,22 +17,23 @@ import com.oilpalm3f.gradingapp.ui.RefreshSyncActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView scanImg, reportsImg;
+    ImageView scanImg, reportsImg, sync_logo;
     LinearLayout synclyt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle("Home Screen");
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Grading Home Screen");
+        setSupportActionBar(toolbar);
 
         synclyt = findViewById(R.id.synclyt);
         scanImg = findViewById(R.id.scanImg);
         reportsImg = findViewById(R.id.reportsImg);
+        sync_logo = findViewById(R.id.refresh_logo1);
 
-        synclyt.setOnClickListener(new View.OnClickListener() {
+        sync_logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent syncintent = new Intent(MainActivity.this, RefreshSyncActivity.class);

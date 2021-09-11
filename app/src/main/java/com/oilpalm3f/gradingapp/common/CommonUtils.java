@@ -843,13 +843,13 @@ public class CommonUtils {
             deviceId = mTelephony.getDeviceId();
         }
 
-      //  return deviceId;
-       return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
-        //return "358525086194531";  //d04766fdfdd6b987 //tab 022 //StampId
+        return deviceId;
+       //return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
+       // return "3d67d4a83a85f9e6";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";
         //return "358525086759978";
         //return "351558071913596";
-        // return "358525086980616";
+        // return "358525086980616";main
         //return "351558073614242";
         // return "351558072968326";  //d04766fdfdd6b987 //tab 022 //StampId
         // return telephonyManager.getDeviceId();
