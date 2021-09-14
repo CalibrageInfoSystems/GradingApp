@@ -61,7 +61,7 @@
                         android:id="@+id/imageView1"
                         style="@style/header_h1_text_title_list_item"
                         android:layout_width="0dp"
-                        android:layout_weight="0.7"
+                        android:layout_weight="0.57"
                         android:layout_height="wrap_content"
                         android:text="Token Number"
                         android:textColor="@color/text_dark_gray" />
@@ -69,13 +69,25 @@
                     <TextView
                         android:id="@+id/tvtokennumber"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.7"
                         style="@style/header_h1_text_title_list_item"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:textColor="@color/green"
                         android:autoLink="web"
                         android:linksClickable="true"/>
+                    <TextView
+                        android:visibility="invisible"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.1"
+                        style="@style/header_h1_text_title_list_item"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/green"
+                        android:autoLink="web"
+                        android:linksClickable="true"/>
+
+
                 </LinearLayout>
 
                 <LinearLayout

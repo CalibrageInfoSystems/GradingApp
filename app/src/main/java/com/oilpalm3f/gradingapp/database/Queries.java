@@ -1001,13 +1001,6 @@ public class Queries {
         return "select * from InterCropPlantationXref  where PlotCode = '" + plotCode + "'";
     }
 
-    public String getYieldQuery(final String fromDate, final String todate) {
-        return "select sum(cpx.NetWeightPerPlot) as totalYield, sum(cpx.YieldPerHectar) as totalYieldPerHecter from CollectionPlotXref cpx\n" +
-                "inner join Collection c on c.Code = cpx.CollectionCode\n" +
-                "where  date(c.CreatedDate) BETWEEN date('" + fromDate + "')" +
-                " AND date('" + todate + "') and cpx.PlotCode  = '" + CommonConstants.PLOT_CODE + "'";
-    }
-
     public String querySumOfSaplings(final String plotCode) {
         return "select IFNULL(sum(SaplingsPlanted),0) from Plantation where PlotCode = '" + plotCode + "' ";
     }
@@ -1164,31 +1157,11 @@ public class Queries {
                 "or f.ContactNumber like '%" + seachKey + "%' or f.GuardianName like '%" + seachKey + "%') group by f.Code limit " + limit + " offset " + offset + ";";
     }
 
-    public String queryCropLastVisitDate() {
-        return "SELECT CreatedDate from Uprootment where PlotCode = '" + CommonConstants.PLOT_CODE + "'" + " order by Id desc LIMIT 1";
-    }
 
     public String queryFarmersCount() {
         return "select count(distinct(f.code)) from Farmer f\n" +
                 "inner join FarmerHistory fh on fh.FarmerCode = f.Code \n" +
                 "and fh.StatusTypeId in ('88', '89')";
-    }
-    public String getCocaInterCropCnt(){
-        return "SELECT COUNT(*) FROM InterCropPlantationXref c WHERE  c.CropId in (129,227) AND c.PlotCode='"+CommonConstants.PLOT_CODE+"'";
-    }
-
-    public String get2018WhiteCount(){
-        return "SELECT COUNT(*) FROM WhiteFlyAssessment w INNER JOIN CropmaintenanceHistory c ON w.CropMaintenaceCode=c.code WHERE w.Year=2018 AND c.PlotCode='"+CommonConstants.PLOT_CODE+"'";
-    }
-
-    public String get2019WhiteCount(){
-        return "SELECT COUNT(*) FROM WhiteFlyAssessment w INNER JOIN CropmaintenanceHistory c ON w.CropMaintenaceCode=c.code WHERE w.Year=2019 AND c.PlotCode='"+CommonConstants.PLOT_CODE+"'";
-    }
-    public String getPlotDistrictId(){
-        return "select DistrictId from Address a INNER JOIN Plot P ON p.AddressCode=a.Code WHERE p.Code='"+CommonConstants.PLOT_CODE+"'";
-    }
-    public String queryVerifyGeoTag() {
-        return "select Latitude, Longitude from GeoBoundaries where PlotCode = '" + CommonConstants.PLOT_CODE + "'" + "  and GeoCategoryTypeId = '207'";
     }
 
     public String queryVerifyFalogDistance() {
@@ -1211,13 +1184,6 @@ public class Queries {
 
     public String getLatestCropMaintanaceHistoryCode(String plotcode) {
         return "select Code, max(CreatedDate) date from CropmaintenanceHistory where plotcode='" + plotcode + "'";
-    }
-
-    public String getCropMaintenanceHistoryData(String historyCode, String tableName) {
-        return "select * from " + tableName + " where CropMaintenanceCode =  '" + historyCode + "' and PlotCode = '" + CommonConstants.PLOT_CODE + "'";
-    }
-    public String getRecommndCropMaintenanceHistoryData(String historyCode, String tableName) {
-        return "select * from " + tableName + " where CropMaintenanceCode =  '" + historyCode + "' and PlotCode = '" + CommonConstants.PLOT_CODE + "'";
     }
 
     public String getPestXrefData(String pestCode) {
@@ -1302,151 +1268,6 @@ public class Queries {
         return "select ut.UserKRAId, ut.KRACode, ut.KRAName, ut.UOM, ut.AnnualTarget, ut.AchievedTarget, ut.UserId, umt.MonthNumber, umt.MonthlyTarget, umt.AchievedTarget from UserTarget ut\n" +
                 "left join UserMonthlyTarget umt on ut.KRACode = umt.KRACode where ut.UserId = '" + userId + "'";
     }
-
-    public String getUnreadNotificationsCountQuery() {
-        return "select count(*) from Alerts where isRead = 0";
-    }
-
-
-
-    public String getAlertsDetailsQueryToRender() {
-        return "select a.*, t.Desc as alertType from Alerts a\n" +
-                "inner join TypeCdDmt t on a.AlertTypeId = t.TypeCdId";
-    }
-
-    public String getAlertsDetailsQueryToSendCloud() {
-        return "select * from Alerts where ServerUpdatedStatus = 0";
-    }
-
-    public String retakeGeoBoundry(final String PlotCode) {
-        return "select IsRetakeGeoTagRequired from Plot where Code ='" + PlotCode + "'";
-    }
-
-
-
-    public static String plotAgeAndPlotLocation(final String PlotCode,final String currentDate) {
-
-        return   "Select Cast (( JulianDay('" + currentDate + "') - JulianDay(p.DateofPlanting)) As Integer)/365 as plotAge,addr.StateId \n " +
-                "FROM Plot p \n" +
-                " inner join Address addr on p.AddressCode = addr.Code \n" +
-                "inner join State s on addr.StateId = s.Id \n" +
-                "WHERE p.Code = '" + PlotCode + "'";
-    }
-
-    public static String CalculateExpectedYield(final int FincYear,final String PlotAge,final String stateId, final String curremtMonth) {
-
-        return   "SELECT Round(sum(MonthlyPercentage/100 * YieldPerHectar),2) as ExpectedYield \n" +
-                " FROM Benchmark WHERE Year = '" + FincYear + "' AND Age = '" + PlotAge + "' AND StateId = '" + stateId + "' \n" +
-                "and  MonthSequenceNumber <= (select MonthSequenceNumber from  Benchmark \n" +
-                " WHERE Year = '" + FincYear + "' AND Age = '" + PlotAge + "' AND StateId = '" + stateId + "' and MonthName = '" + curremtMonth + "' )";
-    }
-
-    public String ExpectedYield(final String plotCode,String YPHValue) {
-        return "select Round(TotalPalmArea * '" + YPHValue + "',2) as areaunderpalm FROM Plot WHERE  Code = '" + plotCode + "'";
-    }
-
-    public String getFarmerCount(){
-        return "Select count(*) from farmer";
-    }
-    public String getPlotCount(){
-        return "Select count(*) from Plot";
-    }
-
-
-    public String getClusterName(final String VillageId){
-        return "SELECT Name from Cluster WHERE Id =  (Select ClusterId FROM VillageClusterxref WHERE VillageId = '" + VillageId + "')";
-    }
-
-    public String getGapFillingTreeCount(final String plotCode,final String latestDate){
-        return "select sum(TreesCount) \n" +
-                "  from Plantation \n" +
-                "  where Datetime('"+ latestDate +"') < Datetime(CreatedDate) and PlotCode ='"+plotCode +"'  AND ReasonTypeId = 330 ";
-    }
-
-    public String getExpectedTreeCount(final String plotCode){
-        return "Select PlamsCount,CreatedDate FROM Uprootment Where PlotCode ='" + plotCode +"' ORDER BY CreatedDate DESC LIMIT 1";
-    }
-
-
-    public String getTotalPlotArea(final String plotCode){
-        return "select TotalPlotArea FROM Plot where Code = '"+ plotCode +"'";
-    }
-
-    public String getNurserySaplings(final String plotCode){
-//        return "select NurseryId,CropVarietyId,SaplingSourceId," +
-//                "SaplingVendorId,NoOfSaplingsDispatched from NurserySaplingDetails where PlotCode = '"+plotCode+"'";
-
-        return   "select NurseryId,CropVarietyId,SaplingSourceId,SaplingVendorId, SUM(NoOfSaplingsDispatched) as  NoOfSaplingsDispatched from NurserySaplingDetails where PlotCode = '"+plotCode+"' Group by CropVarietyId";
-    }
-
-    public String getNurserySaplingsArea(final String plotCode){
-        return "select sum(NoOfSaplingsDispatched) from NurserySaplingDetails where PlotCode = '"+plotCode+"'";
-    }
-
-    //    public String getNurserySaplingsArea(final String plotCode){
-//        return "select NoOfSaplingsDispatched from NurserySaplingDetails where PlotCode = '"+plotCode+"'";
-//    }
-    public  String getVisitCount(final String plotCode)
-    {
-        return "select SUM(CASE WHEN UpdatedDate  BETWEEN date('now', 'localtime', '-3 months', 'start of year', '+3 months') AND " +
-                "date('now', 'localtime', '-3 months', 'start of year', '+1 year', '+3 months', '-1 day') THEN 1 ELSE 0 END),MAX(UpdatedDate) as  CreatedDate " +
-                "from CropMaintenanceHistory where  PlotCode = '"+plotCode+"'";
-    }
-    public String getAdvanceReceivedArea(final String plotCode){
-        return "select sum(AdvanceReceivedArea) from AdvancedDetails where PlotCode = '"+plotCode+"'";
-    }
-
-    public String getNumber(String number)
-    {
-//        return  " select Code,FirstName,LastName,MiddleName from farmer where ContactNumber ='"+number+"' ";
-        return  " select f.Code,FirstName,LastName,MiddleName,v.name as Villagename, c.name as Clustername from farmer f \n" +
-                "inner join Village v on f.VillageId = v.id  \n" +
-                "Inner join VillageClusterxref vc ON vc.VillageId = v.Id\n" +
-                "Inner join Cluster c ON c.Id = vc.ClusterId\n" +
-                "Where  f.ContactNumber ='"+number+"'";
-    }
-
-    public String getFarmerdetails()
-    {
-        return  "Select f.*, v.name as VillageName, c.Id as ClusterId, c.name as ClusterName\n" +
-                "from Farmer f\n" +
-                "JOIN Village v ON v.Id = f.VillageId\n" +
-                "JOIN VillageClusterxref vc ON vc.VillageId = v.Id\n" +
-                "JOIN Cluster c ON c.Id = vc.ClusterId ";
-    }
-
-    public String getBAnkNumber(String accountno){
-//        return "select Farmer.Code,Farmer.FirstName,Farmer.LastName,Farmer.MiddleName,Farmer.GuardianName from Farmer inner join  FarmerBank on Farmer.Code=FarmerBank.FarmerCode where \n" +
-//                "FarmerBank.AccountNumber='"+accountno+"'";
-
-        return  "select Farmer.Code,Farmer.FirstName,Farmer.LastName,Farmer.MiddleName,Farmer.GuardianName,v.name as Villagename, c.name as Clustername  from Farmer inner join  FarmerBank on Farmer.Code=FarmerBank.FarmerCode\n" +
-                "inner join Village v on Farmer.VillageId = v.id  \n" +
-                "Inner join VillageClusterxref vc ON vc.VillageId = v.Id\n" +
-                "Inner join Cluster c ON c.Id = vc.ClusterId\n" +
-                "where FarmerBank.AccountNumber='"+accountno+"'";
-    }
-
-    public String getIdProofNumber(String idProofNumber){
-//        return "select Farmer.Code,Farmer.FirstName,Farmer.LastName,Farmer.MiddleName,Farmer.GuardianName from Farmer inner join  IdentityProof on Farmer.Code=IdentityProof.FarmerCode where \n" +
-//                "IdentityProof.IdProofNumber='"+idProofNumber+"'";
-
-        return "select Farmer.Code,Farmer.FirstName,Farmer.LastName,Farmer.MiddleName,Farmer.GuardianName,v.name as Villagename, c.name as Clustername from Farmer inner join  IdentityProof on Farmer.Code=IdentityProof.FarmerCode \n" +
-                "inner join Village v on Farmer.VillageId = v.id  \n" +
-                "Inner join VillageClusterxref vc ON vc.VillageId = v.Id\n" +
-                "Inner join Cluster c ON c.Id = vc.ClusterId\n" +
-                "where IdentityProof.IdProofNumber= '"+idProofNumber+"'";
-    }
-
-    public String getRating(int typeID,int id)
-    {
-        return "select Remarks from LookUp where LookUpTypeId = '"+typeID+"' and Id = '"+id+"'";
-    }
-
-    public String getPerOfTree(int typeID,String des)
-    {
-        return "select TypeCdId from TypeCdDmt where ClassTypeId = '"+typeID+"' and Desc = '"+des+"'";
-    }
-
 
 
     public String getGradingReports(final String fromDate, final String toDate) {

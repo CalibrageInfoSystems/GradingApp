@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 
-import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.OilPalmException;
 import com.oilpalm3f.gradingapp.database.Palm3FoilDatabase;
 
@@ -17,9 +16,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -131,71 +128,6 @@ public class HttpClient {
         }
     }
 
-    /**
-     * Posting data to server
-     * @param url  ----> webservice url
-     * @param jsonObject  ----> Hashmap which contains posting data keys and posting data values.
-     * @param onComplete
-     */
-    public static synchronized void  postDataToServerjson(final Context context, final String url, final JSONObject jsonObject, final ApplicationThread.OnComplete onComplete) {
-        // check the connectivity mode
-
-        if (offline) {
-            if (null != onComplete) onComplete.execute(false, null, "not connected");
-            return;
-        }
-        Log.i("Jurl...", url);
-        Palm3FoilDatabase  palm3FoilDatabase = Palm3FoilDatabase.getPalm3FoilDatabase(context);
-        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-        final HttpPost post = new org.apache.http.client.methods.HttpPost(url);
-        try {
-            if( jsonObject != null) {
-                Log.i("Data...", "@@@ "+jsonObject.toString());
-                StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
-                //sets the post request as the resulting string
-                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                post.setEntity(entity);
-                post.setHeader("Accept", "application/json");
-                post.setHeader("Content-type", "application/json");
-//                Log.i("Json Data to server", jsonObject.toString());
-
-
-                HttpClientParams.setRedirecting(client.getParams(), true);
-
-                final HttpResponse response = client.execute(post);
-                final int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode == HttpStatus.SC_OK) {
-                    final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
-                    Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
-                    Log.v("@@postResponse",""+postResponse);
-                    if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
-                } else {
-                    final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
-
-                   // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
-                    Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
-                    Log.pushLogToCrashlytics(postResponse);
-                    Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
-                    if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
-
-
-                }
-            }
-            // enable redirects
-
-        } catch(Exception e) {
-
-            e.printStackTrace();
-            Log.e(HttpClient.class.getName(), e);
-            post.abort();
-
-            if (null != onComplete) onComplete.execute(false, null, e.getMessage());
-        } finally {
-            client.close();
-        }
-    }
-
     public static synchronized void  postDataToServerjsonn(final Context context, final String url, final JSONArray jsonObject, final ApplicationThread.OnComplete onComplete) {
         // check the connectivity mode
 
@@ -253,103 +185,6 @@ public class HttpClient {
         } finally {
             client.close();
         }
-    }
-
-
-    /**
-     * Posting data to server
-     * @param url  ----> webservice url
-     * @param jsonObject  ----> Hashmap which contains posting data keys and posting data values.
-     * @param onComplete
-     */
-    public static synchronized void getKrasDataToServerjson(final String url, final JSONObject jsonObject, final ApplicationThread.OnComplete onComplete) {
-        // check the connectivity mode
-
-        if (offline) {
-            if (null != onComplete) onComplete.execute(false, null, "not connected");
-            return;
-        }
-        Log.i("Jurl...", url);
-        final android.net.http.AndroidHttpClient client = android.net.http.AndroidHttpClient.newInstance("calib");
-        final org.apache.http.client.methods.HttpPost post = new org.apache.http.client.methods.HttpPost(url);
-        try {
-            if( jsonObject != null) {
-                Log.i("Data...", "@@@ "+jsonObject.toString());
-                StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
-                //sets the post request as the resulting string
-                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                post.setEntity(entity);
-                post.setHeader("Accept", "application/json");
-                post.setHeader("Content-type", "application/json");
-//                Log.i("Json Data to server", jsonObject.toString());
-            }
-            // enable redirects
-            HttpClientParams.setRedirecting(client.getParams(), true);
-//            HttpConnectionParams.setConnectionTimeout(client.getParams(), CONNECTION_TIMEOUT_MILLIS);
-
-            final org.apache.http.HttpResponse response = client.execute(post);
-            final int statusCode = response.getStatusLine().getStatusCode();
-
-            if (statusCode == HttpStatus.SC_OK) {
-                final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
-                Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
-                if (null != onComplete) onComplete.execute(true, postResponse, null);
-            } else {
-                final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
-                Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
-                Log.pushLogToCrashlytics(postResponse);
-                Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
-                if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
-            }
-        } catch(Exception e) {
-
-            e.printStackTrace();
-            Log.e(HttpClient.class.getName(), e);
-            post.abort();
-
-            if (null != onComplete) onComplete.execute(false, null, e.getMessage());
-        } finally {
-            client.close();
-        }
-    }
-
-    public static void postJson(String url, Map<String, Object> values,
-                                ApplicationThread.OnComplete<String> onComplete) {
-        MediaType type = MediaType.parse("application/json; charset=utf-8");
-        RequestBody requestBody = RequestBody.create(type, values.toString());
-        Request request = buildRequest(url, "POST", (requestBody != null) ? requestBody : RequestBody.create(TEXT_PLAIN, "")).build();
-        OkHttpClient client = getOkHttpClient();
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
-            int statusCode = response.code();
-            if (statusCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                Log.d(LOG_TAG, " ############# POST RESPONSE ################ (" + statusCode + ")\n\nError " + statusCode + "\nreason phrase: " + response.message());
-                if (null != onComplete)
-                    onComplete.execute(false, statusCode + "|" + response.message() + "|" + request.url(), "Error " + statusCode + " while retrieving data from " + request.url() + "\nreason phrase: " + response.message());
-                response.body().close();
-                return;
-            }
-            final String strResponse = response.body().string();
-            Log.d(LOG_TAG, " ############# POST RESPONSE ################ (" + statusCode + ")\n\n" + strResponse + "\n\n");
-
-            if (null != onComplete) {
-                if (HttpURLConnection.HTTP_NO_CONTENT == statusCode) {
-                    onComplete.execute(true, null, null);
-                } else {
-                    onComplete.execute(true, strResponse, null);
-                    response.body().close();
-                }
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "accessing: (" + url + ")", e);
-            if (null != onComplete) onComplete.execute(false, null, e.getMessage());
-        } finally {
-            if (null != response) {
-                response.body().close();
-            }
-        }
-
     }
 
     public static void post(String url, Map<String, Object> values,

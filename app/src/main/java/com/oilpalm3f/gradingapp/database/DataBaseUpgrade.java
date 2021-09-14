@@ -56,11 +56,7 @@ public class DataBaseUpgrade {
     public static void upgradeDb1(final SQLiteDatabase db) {
         Log.d(LOG_TAG, "******* upgradeDataBase " + Palm3FoilDatabase.DATA_VERSION);
 
-        //String alterGeoBoundariesTable1 = "ALTER TABLE GeoBoundaries ADD COLUMN CropMaintenanceCode VARCHAR (60)";
-
         try {
-            //db.execSQL(alterGeoBoundariesTable1);
-            //  db.execSQL(alterPlotTable1);
 
         } catch (Exception e) {
             e.printStackTrace();

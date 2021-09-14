@@ -450,7 +450,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             }
 
             if(item.getLooseFruitWeight()!= null  ){
-                tvloosefruitweight.setText(item.getLooseFruitWeight()+"");}
+                tvloosefruitweight.setText(item.getLooseFruitWeight()+" (Kgs)");}
             else{
                 linearloosefruitweight.setVisibility(View.GONE);
             }
