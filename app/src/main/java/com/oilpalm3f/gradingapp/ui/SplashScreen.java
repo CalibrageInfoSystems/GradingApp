@@ -96,17 +96,19 @@ public class SplashScreen extends AppCompatActivity {
 
     public void startMasterSync() {
 
-        if (CommonUtils.isNetworkAvailable(this) && !sharedPreferences.getBoolean(CommonConstants.IS_MASTER_SYNC_SUCCESS,false)) {
+        if (CommonUtils.isNetworkAvailable(this)) {
             DataSyncHelper.performMasterSync(this, PrefUtil.getBool(this, CommonConstants.IS_MASTER_SYNC_SUCCESS), new ApplicationThread.OnComplete() {
                 @Override
                 public void execute(boolean success, Object result, String msg) {
                     ProgressBar.hideProgressBar();
                     if (success) {
+                        Log.d("MasterSyncSuccess", "true");
                         UiUtils.showCustomToastMessage("Master Sync Success", SplashScreen.this, 0);
                         sharedPreferences.edit().putBoolean(CommonConstants.IS_MASTER_SYNC_SUCCESS, true).apply();
                         startActivity(new Intent(SplashScreen.this, MainLoginScreen.class));
                         finish();
                     } else {
+                        Log.d("MasterSyncSuccess", "false");
                         Log.v(LOG_TAG, "@@@ Master sync failed " + msg);
                         ApplicationThread.uiPost(LOG_TAG, "master sync message", new Runnable() {
                             @Override
@@ -115,7 +117,7 @@ public class SplashScreen extends AppCompatActivity {
                                 startActivity(new Intent(SplashScreen.this, MainLoginScreen.class));
                                 finish();
                             }
-                        });
+                        }); 
                     }
                 }
             });

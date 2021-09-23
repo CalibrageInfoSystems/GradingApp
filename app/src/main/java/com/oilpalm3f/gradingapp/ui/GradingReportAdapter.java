@@ -231,7 +231,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
 
         if(!TextUtils.isEmpty(item.getRejectedBunches()))
-        holder.tvrejectedbunches.setText(item.getRejectedBunches()+" (Kgs)");
+        holder.tvrejectedbunches.setText(item.getRejectedBunches()+"");
         else{
             holder.linearrejectedbunches.setVisibility(View.GONE);
         }
@@ -458,7 +458,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             tvgradername.setText(item.getGraderName()+"");
 
             if(!TextUtils.isEmpty(item.getRejectedBunches()))
-                tvrejectedbunches.setText(item.getRejectedBunches()+" (Kgs)");
+                tvrejectedbunches.setText(item.getRejectedBunches()+"");
             else{
                  linearrejectedbunches.setVisibility(View.GONE);
             }

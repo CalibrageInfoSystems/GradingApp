@@ -43,6 +43,7 @@ import com.android.print.sdk.Barcode;
 import com.android.print.sdk.PrinterConstants;
 import com.android.print.sdk.PrinterInstance;
 import com.oilpalm3f.gradingapp.BuildConfig;
+import com.oilpalm3f.gradingapp.MainActivity;
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.common.CommonConstants;
@@ -50,6 +51,9 @@ import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.common.InputFilterMinMax;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.Queries;
+import com.oilpalm3f.gradingapp.datasync.helpers.DataManager;
+import com.oilpalm3f.gradingapp.datasync.helpers.DataSyncHelper;
+import com.oilpalm3f.gradingapp.dbmodels.UserDetails;
 import com.oilpalm3f.gradingapp.printer.BluetoothDevicesFragment;
 import com.oilpalm3f.gradingapp.printer.PrinterChooserFragment;
 import com.oilpalm3f.gradingapp.printer.UsbDevicesListFragment;
@@ -57,6 +61,7 @@ import com.oilpalm3f.gradingapp.printer.onPrinterType;
 import com.oilpalm3f.gradingapp.utils.ImageUtility;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +69,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+import static com.oilpalm3f.gradingapp.datasync.helpers.DataManager.USER_DETAILS;
 
 import static com.oilpalm3f.gradingapp.common.CommonUtils.REQUEST_CAM_PERMISSIONS;
 
@@ -89,7 +95,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     String somestring = "202109021331";
     int tokenexists;
-    
+    int tokenssize;
+    int printtokenssize;
+    String createdByName;
+    String tokenCount;
+
     private DataAccessHandler dataAccessHandler;
     private ImageView slipImage, slipIcon;
     private static final int CAMERA_REQUEST = 1888;
@@ -114,8 +124,13 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         //Log.d("FirstEight",firstEight(somestring));
 
+        UserDetails userDetails = (UserDetails) DataManager.getInstance().getDataFromManager(USER_DETAILS);
 
-
+        if (null != userDetails) {
+            createdByName = userDetails.getFirstName();
+            Log.d("CreatedBYName", createdByName + "");
+        }
+        Log.d("CreatedBYName1", createdByName + "");
 
 
         tokenNumber = findViewById(R.id.tokenNumber);
@@ -154,13 +169,27 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         shortstalk.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100")});
         optimum.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100")});
 
+        gradingdoneby.setText(createdByName);
+
+//        unripen.setText("100");
+//        underripe.setText("0");
+//        ripen.setText("0");
+//        overripe.setText("0");
+//        diseased.setText("0");
+//        emptybunches.setText("0");
+//        longstalk.setText("100");
+//        mediumstalk.setText("0");
+//        shortstalk.setText("0");
+//        optimum.setText("0");
+//        isloosefruitavailable_spinner.setSelection(1);
+//        loosefruitweight.setText("42");
+//        rejectedBunches.setText("66");
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             qrvalue = extras.getString("qrvalue");
             Log.d("QR Code Value is", qrvalue + "");
         }
-
-
 
       splitString = qrvalue.split("/");
 //
@@ -177,13 +206,13 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         grossweight.setText(splitString[3] + "");
        // tokendate.setText(splitString[4] + "");
 
-        Log.d("String1", splitString[0] + "");
-        Log.d("String2", splitString[1] + "");
-        Log.d("String3", splitString[2] + "");
-        Log.d("String4", splitString[3] + "");
-        //Log.d("String5", splitString[4] + "");
+//        Log.d("String1", splitString[0] + "");
+//        Log.d("String2", splitString[1] + "");
+//        Log.d("String3", splitString[2] + "");
+//        Log.d("String4", splitString[3] + "");
+//        //Log.d("String5", splitString[4] + "");
 
-        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0]));
+        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0], splitString[2]));
         Log.d("tokenexists",tokenexists + "");
 
         if (tokenexists == 1){
@@ -191,6 +220,10 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             showDialog(GradingActivity.this, "Grading Already done for this Token");
 
         }
+//        tokenssize = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenSizeQuery());
+//        printtokenssize = tokenssize  + 1;
+//        Log.d("tokenssize", tokenssize + "");
+//        Log.d("printtokenssize", printtokenssize + "");
 
 
         firsteight = firstEight(splitString[0]);
@@ -206,6 +239,9 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         }
 
         Log.d("fruitType is", fruitType);
+
+         tokenCount = tokenNumber.getText().toString().substring(11);
+        Log.d("tokenCount", tokenCount + "");
 
 
         tokenNumber.setText(splitString[0] + "");
@@ -318,8 +354,6 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                         }
                     });
 
-
-
                     List<LinkedHashMap> details = new ArrayList<>();
                     LinkedHashMap map = new LinkedHashMap();
 
@@ -377,13 +411,39 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
                             if (success) {
                                 Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT COMPLETED");
+
+                                if (CommonUtils.isNetworkAvailable(GradingActivity.this)) {
+                                    DataSyncHelper.performRefreshTransactionsSync(GradingActivity.this, new ApplicationThread.OnComplete() {
+                                        @Override
+                                        public void execute(boolean success, Object result, String msg) {
+                                            if (success) {
+                                                ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
+                                                        startActivity(new Intent(GradingActivity.this, MainActivity.class));
+                                                    }
+                                                });
+                                            } else {
+                                                ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        UiUtils.showCustomToastMessage("Data sync failed", GradingActivity.this, 1);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    startActivity(new Intent(GradingActivity.this, MainActivity.class));
+                                }
                                 //Toast.makeText(GradingActivity.this, "Submit Successfully", Toast.LENGTH_SHORT).show();
 
-                                FragmentManager fm = getSupportFragmentManager();
-                                PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
-                                printerChooserFragment.setPrinterType(GradingActivity.this);
-                                printerChooserFragment.show(fm, "bluetooth fragment");
-                                //finish();
+//                                FragmentManager fm = getSupportFragmentManager();
+//                                PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
+//                                printerChooserFragment.setPrinterType(GradingActivity.this);
+//                                printerChooserFragment.show(fm, "bluetooth fragment");
+                              //  finish();
 
                             } else {
                                 Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
@@ -563,10 +623,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     private void setPic()
     {
-
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
-
 
 
         /* Get the size of the ImageView */
@@ -576,6 +634,9 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         /* Get the size of the image */
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
+       ;
+
+
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
@@ -593,7 +654,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         /* Decode the JPEG file into a Bitmap */
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
         bitmap = ImageUtility.rotatePicture(90, bitmap);
 
         currentBitmap = bitmap;
@@ -686,97 +748,95 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         sb.append(" ");
         sb.append(" Grading Date : ").append(CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_4) + "").append("\n");
 
-
-
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-        sb.append("  FFB Quality Details" + "\n");
-        sb.append("-----------------------------------------------\n");
-
-        if (!unripen.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Unripen : ").append(unripen.getText().toString() + "%").append("\n");
-        }
-        if (!underripe.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Under Ripe : ").append(underripe.getText().toString() + "%").append("\n");
-        }
-        if (!ripen.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Ripen : ").append(ripen.getText().toString() + "%").append("\n");
-        }
-        if (!overripe.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Over Ripe : ").append(overripe.getText().toString() + "%").append("\n");
-        }
-        if (!diseased.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Diseased : ").append(diseased.getText().toString() + "%").append("\n");
-        }
-        if (!emptybunches.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Empty Bunch's : ").append(emptybunches.getText().toString() + "%").append("\n");
-        }
-
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-        sb.append("  Stalk Quality Details" + "\n");
-        sb.append("-----------------------------------------------\n");
-
-        if (!longstalk.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Long : ").append(longstalk.getText().toString() + "%").append("\n");
-        }
-        if (!mediumstalk.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Medium : ").append(mediumstalk.getText().toString() + "%").append("\n");
-        }
-        if (!shortstalk.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Short : ").append(shortstalk.getText().toString() + "%").append("\n");
-        }
-        if (!optimum.getText().toString().equalsIgnoreCase("0")) {
-            sb.append(" ");
-            sb.append(" Optimum : ").append(optimum.getText().toString() + "%").append("\n");
-        }
-
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-
-        if (!TextUtils.isEmpty(loosefruitweight.getText().toString())){
-            sb.append(" ");
-            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(loosefruitweight.getText().toString() + "(Kgs)").append("\n");
-        }
-
-        if (!TextUtils.isEmpty(rejectedBunches.getText().toString())) {
-            sb.append(" ");
-            sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString() + "(Kgs)").append("\n");
-        }
-            sb.append(" ");
-            sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
-
-
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" CC Officer signature");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" Farmer signature");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//        sb.append("  FFB Quality Details" + "\n");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (!unripen.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Unripen : ").append(unripen.getText().toString() + "%").append("\n");
+//        }
+//        if (!underripe.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Under Ripe : ").append(underripe.getText().toString() + "%").append("\n");
+//        }
+//        if (!ripen.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Ripen : ").append(ripen.getText().toString() + "%").append("\n");
+//        }
+//        if (!overripe.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Over Ripe : ").append(overripe.getText().toString() + "%").append("\n");
+//        }
+//        if (!diseased.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Diseased : ").append(diseased.getText().toString() + "%").append("\n");
+//        }
+//        if (!emptybunches.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Empty Bunch's : ").append(emptybunches.getText().toString() + "%").append("\n");
+//        }
+//
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//        sb.append("  Stalk Quality Details" + "\n");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (!longstalk.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Long : ").append(longstalk.getText().toString() + "%").append("\n");
+//        }
+//        if (!mediumstalk.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Medium : ").append(mediumstalk.getText().toString() + "%").append("\n");
+//        }
+//        if (!shortstalk.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Short : ").append(shortstalk.getText().toString() + "%").append("\n");
+//        }
+//        if (!optimum.getText().toString().equalsIgnoreCase("0")) {
+//            sb.append(" ");
+//            sb.append(" Optimum : ").append(optimum.getText().toString() + "%").append("\n");
+//        }
+//
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (!TextUtils.isEmpty(loosefruitweight.getText().toString())){
+//            sb.append(" ");
+//            sb.append(" Loose Fruit Approx.Quantity : ").append(loosefruitweight.getText().toString() + "(Kgs)").append("\n");
+//        }
+//
+//        if (!TextUtils.isEmpty(rejectedBunches.getText().toString())) {
+//            sb.append(" ");
+//            sb.append(" Rejected Bunches : ").append(rejectedBunches.getText().toString() + "").append("\n");
+//        }
+//            sb.append(" ");
+//            sb.append(" Grader Name : ").append(gradingdoneby.getText().toString()).append("\n");
+//
+//
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" Ramp Incharge/Grader signature");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" Farmer signature");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
 
         mPrinter.printText(sb.toString());
 
@@ -816,6 +876,20 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
 
+        String space = "-----------------------------------------------";
+        String tokenNumber  =  "Token Number";
+        String spaceBuilderr = "\n";
+
+        mPrinter.printText(space);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(tokenNumber);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(tokenCount);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(space);
+        mPrinter.printText(spaceBuilderr);
+
+
         if(CommonConstants.PrinterName.contains("AMIGOS")){
             Log.d(LOG_TAG,"########### NEW ##############");
             print_qr_code(mPrinter,qrCodeValue);
@@ -825,7 +899,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         }
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText(qrCodeValue);
+        //mPrinter.printText(qrCodeValue);
 
         String spaceBuilder = "\n" +
                 " " +
@@ -834,8 +908,6 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                 "\n" +
                 "\n" +
                 " " +
-                "\n" +
-                "\n" +
                 "\n" +
                 "\n";
         mPrinter.printText(spaceBuilder);
@@ -851,7 +923,31 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         } finally {
             if (printSuccess) {
                 Toast.makeText(GradingActivity.this, "Print Success", Toast.LENGTH_SHORT).show();
-                finish();
+//                if (CommonUtils.isNetworkAvailable(GradingActivity.this)) {
+//                    DataSyncHelper.performRefreshTransactionsSync(GradingActivity.this, new ApplicationThread.OnComplete() {
+//                        @Override
+//                        public void execute(boolean success, Object result, String msg) {
+//                            if (success) {
+//                                ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
+//                                        startActivity(new Intent(GradingActivity.this, MainActivity.class));
+//                                    }
+//                                });
+//                            } else {
+//                                ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        UiUtils.showCustomToastMessage("Data sync failed", GradingActivity.this, 1);
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    startActivity(new Intent(GradingActivity.this, MainActivity.class));
+//                }
             }
         }
 
@@ -941,7 +1037,5 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             }
         }, 500);
     }
-
-
 
 }

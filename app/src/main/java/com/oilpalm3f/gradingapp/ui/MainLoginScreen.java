@@ -144,6 +144,8 @@ public class MainLoginScreen extends AppCompatActivity {
             }
         });
 
+        transactionSync();
+
     }
 
 
@@ -210,6 +212,39 @@ public class MainLoginScreen extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    public void transactionSync(){
+        if (CommonUtils.isNetworkAvailable(MainLoginScreen.this)) {
+            DataSyncHelper.performRefreshTransactionsSync(MainLoginScreen.this, new ApplicationThread.OnComplete() {
+                @Override
+                public void execute(boolean success, final Object result, String msg) {
+                    if (success) {
+                        ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
+                            @Override
+                            public void run() {
+                                UiUtils.showCustomToastMessage("Successfully data sent to server", MainLoginScreen.this, 0);
+                                // dataAccessHandler.updateUserSync();
+
+                            }
+                        });
+                    } else {
+                        ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
+                            @Override
+                            public void run() {
+                                UiUtils.showCustomToastMessage("Sync Failed due to"+result, MainLoginScreen.this, 1);
+                            }
+                        });
+                    }
+                }
+
+            });
+
+        } else {
+            UiUtils.showCustomToastMessage("Please check network connection", MainLoginScreen.this, 1);
+        }
+
 
     }
 }

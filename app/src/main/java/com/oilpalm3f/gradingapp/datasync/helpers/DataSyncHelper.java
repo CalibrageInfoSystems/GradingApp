@@ -200,6 +200,7 @@ public class DataSyncHelper {
                         transactionsCheck++;
                         if (transactionsCheck == refreshtransactionsDataMap.size()) {
                             Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
+                            ProgressBar.hideProgressBar();
                             onComplete.execute(true, null, "Sync is success");
 
                         } else {

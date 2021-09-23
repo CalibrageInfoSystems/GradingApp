@@ -384,98 +384,101 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
 
 
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-        sb.append("  FFB Quality Details" + "\n");
-        sb.append("-----------------------------------------------\n");
-
-        if (selectedReport.getUnRipen() != 0) {
-            sb.append(" ");
-            sb.append(" Unripen : ").append(selectedReport.getUnRipen() + "%").append("\n");
-        }
-        if (selectedReport.getUnderRipe() != 0) {
-            sb.append(" ");
-            sb.append(" Under Ripe : ").append(selectedReport.getUnderRipe() + "%").append("\n");
-        }
-        if (selectedReport.getRipen() != 0) {
-            sb.append(" ");
-            sb.append(" Ripen : ").append(selectedReport.getRipen() + "%").append("\n");
-        }
-        if (selectedReport.getOverRipe() != 0) {
-            sb.append(" ");
-            sb.append(" Over Ripe : ").append(selectedReport.getOverRipe() + "%").append("\n");
-        }
-        if (selectedReport.getDiseased() != 0) {
-            sb.append(" ");
-            sb.append(" Diseased : ").append(selectedReport.getDiseased() + "%").append("\n");
-        }
-        if (selectedReport.getEmptyBunches() != 0) {
-            sb.append(" ");
-            sb.append(" Empty Bunch's : ").append(selectedReport.getEmptyBunches() + "%").append("\n");
-        }
-
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-        sb.append("  Stalk Quality Details" + "\n");
-        sb.append("-----------------------------------------------\n");
-
-        if (selectedReport.getFFBQualityLong() != 0) {
-            sb.append(" ");
-            sb.append(" Long : ").append(selectedReport.getFFBQualityLong() + "%").append("\n");
-        }
-        if (selectedReport.getFFBQualityMedium() != 0) {
-            sb.append(" ");
-            sb.append(" Medium : ").append(selectedReport.getFFBQualityMedium() + "%").append("\n");
-        }
-        if (selectedReport.getFFBQualityShort() != 0) {
-            sb.append(" ");
-            sb.append(" Short : ").append(selectedReport.getFFBQualityShort() + "%").append("\n");
-        }
-        if (selectedReport.getFFBQualityOptimum() != 0) {
-            sb.append(" ");
-            sb.append(" Optimum : ").append(selectedReport.getFFBQualityOptimum() + "%").append("\n");
-        }
-
-        sb.append(" ");
-        sb.append("-----------------------------------------------\n");
-
-        if (!TextUtils.isEmpty(selectedReport.getLooseFruitWeight())){
-            sb.append(" ");
-            sb.append(" Loose Fruit Quantity Approx.Quantity : ").append(selectedReport.getLooseFruitWeight() + "(Kgs)").append("\n");
-        }
-        if (!TextUtils.isEmpty(selectedReport.getRejectedBunches())){
-
-            sb.append(" ");
-            sb.append(" Rejected Bunches : ").append(selectedReport.getRejectedBunches() + "(Kgs)").append("\n");
-        }
-
-        sb.append(" ");
-        sb.append(" Grader Name : ").append(selectedReport.getGraderName()).append("\n");
-
-
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" CC Officer signature");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" Farmer signature");
-        sb.append(" ");
-        sb.append("\n");
-        sb.append(" ");
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//        sb.append("  FFB Quality Details" + "\n");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (selectedReport.getUnRipen() != 0) {
+//            sb.append(" ");
+//            sb.append(" Unripen : ").append(selectedReport.getUnRipen() + "%").append("\n");
+//        }
+//        if (selectedReport.getUnderRipe() != 0) {
+//            sb.append(" ");
+//            sb.append(" Under Ripe : ").append(selectedReport.getUnderRipe() + "%").append("\n");
+//        }
+//        if (selectedReport.getRipen() != 0) {
+//            sb.append(" ");
+//            sb.append(" Ripen : ").append(selectedReport.getRipen() + "%").append("\n");
+//        }
+//        if (selectedReport.getOverRipe() != 0) {
+//            sb.append(" ");
+//            sb.append(" Over Ripe : ").append(selectedReport.getOverRipe() + "%").append("\n");
+//        }
+//        if (selectedReport.getDiseased() != 0) {
+//            sb.append(" ");
+//            sb.append(" Diseased : ").append(selectedReport.getDiseased() + "%").append("\n");
+//        }
+//        if (selectedReport.getEmptyBunches() != 0) {
+//            sb.append(" ");
+//            sb.append(" Empty Bunch's : ").append(selectedReport.getEmptyBunches() + "%").append("\n");
+//        }
+//
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//        sb.append("  Stalk Quality Details" + "\n");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (selectedReport.getFFBQualityLong() != 0) {
+//            sb.append(" ");
+//            sb.append(" Long : ").append(selectedReport.getFFBQualityLong() + "%").append("\n");
+//        }
+//        if (selectedReport.getFFBQualityMedium() != 0) {
+//            sb.append(" ");
+//            sb.append(" Medium : ").append(selectedReport.getFFBQualityMedium() + "%").append("\n");
+//        }
+//        if (selectedReport.getFFBQualityShort() != 0) {
+//            sb.append(" ");
+//            sb.append(" Short : ").append(selectedReport.getFFBQualityShort() + "%").append("\n");
+//        }
+//        if (selectedReport.getFFBQualityOptimum() != 0) {
+//            sb.append(" ");
+//            sb.append(" Optimum : ").append(selectedReport.getFFBQualityOptimum() + "%").append("\n");
+//        }
+//
+//        sb.append(" ");
+//        sb.append("-----------------------------------------------\n");
+//
+//        if (!TextUtils.isEmpty(selectedReport.getLooseFruitWeight())){
+//            sb.append(" ");
+//            sb.append(" Loose Fruit Approx.Quantity : ").append(selectedReport.getLooseFruitWeight() + "(Kgs)").append("\n");
+//        }
+//        if (!TextUtils.isEmpty(selectedReport.getRejectedBunches())){
+//
+//            sb.append(" ");
+//            sb.append(" Rejected Bunches : ").append(selectedReport.getRejectedBunches() + "").append("\n");
+//        }
+//
+//        sb.append(" ");
+//        sb.append(" Grader Name : ").append(selectedReport.getGraderName()).append("\n");
+//
+//
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" Ramp Incharge/Grader signature");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" Farmer signature");
+//        sb.append(" ");
+//        sb.append("\n");
+//        sb.append(" ");
 
         mPrinter.printText(sb.toString());
+
+        String tokenCount = selectedReport.getTokenNumber().substring(11);
+        Log.d("tokenCount", tokenCount + "");
 
         boolean fruitavailable;
 
@@ -523,6 +526,19 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
 
+        String space = "-----------------------------------------------";
+        String tokenNumber  =  "Token Number";
+        String spaceBuilderr = "\n";
+
+        mPrinter.printText(space);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(tokenNumber);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(tokenCount);
+        mPrinter.printText(spaceBuilderr);
+        mPrinter.printText(space);
+        mPrinter.printText(spaceBuilderr);
+
         if(CommonConstants.PrinterName.contains("AMIGOS")){
             android.util.Log.d(LOG_TAG,"########### NEW ##############");
             print_qr_code(mPrinter,qrCodeValue);
@@ -532,7 +548,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         }
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText(qrCodeValue);
+       // mPrinter.printText(qrCodeValue);
 
         String spaceBuilder = "\n" +
                 " " +
@@ -541,8 +557,6 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
                 "\n" +
                 "\n" +
                 " " +
-                "\n" +
-                "\n" +
                 "\n" +
                 "\n";
         mPrinter.printText(spaceBuilder);
