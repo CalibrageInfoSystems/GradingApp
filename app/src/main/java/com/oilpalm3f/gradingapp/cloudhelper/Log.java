@@ -4,6 +4,7 @@ import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
 
+//Common Log Class
 public class Log {
 
     public static final boolean DEBUG_FLAG = true;

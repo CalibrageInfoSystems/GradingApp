@@ -18,7 +18,7 @@ public class CloudDataHandler {
 
     private static final String LOG_TAG = CloudDataHandler.class.getName();
 
-
+    //To Place Data In Cloud
     public static synchronized void placeDataInCloudd(final Context context, final JSONArray values, final String url, final ApplicationThread.OnComplete<String> onComplete) {
         ApplicationThread.bgndPost(CloudDataHandler.class.getName(), "placeDataInCloud..", () -> {
             try {
@@ -46,8 +46,7 @@ public class CloudDataHandler {
     }
 
 
-
-
+    //To Get Master Data
     public static void getMasterData(final String url, final LinkedHashMap dataMap, final ApplicationThread.OnComplete<HashMap<String, List>> onComplete) {
         ApplicationThread.bgndPost(CloudDataHandler.class.getName(), "getMasterData...", new Runnable() {
             @Override

@@ -35,9 +35,12 @@ public class UiUtils {
     /*
      * If backgrount type 0(Zero) = Green
      *                    1        = Red*/
+
+    //Shows Custom Toast Message
     public static void showCustomToastMessage(final String message, final Context context, final int backgroundColorType) {
         showCustomToastMessageLong(message,context, backgroundColorType, Toast.LENGTH_SHORT);
     }
+
 
     public static void showCustomToastMessageLong(final String message, final Context context, final int backgroundColorType, final int length) {
         ApplicationThread.uiPost(LOG_TAG, "show custom toast", new Runnable() {

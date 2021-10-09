@@ -45,6 +45,7 @@ import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
+//Master/Transaction/Send Data will be done from here
 public class DataSyncHelper {
     private static final String LOG_TAG = DataSyncHelper.class.getName();
     public static int countCheck, transactionsCheck = 0, imagesCount = 0, reverseSyncTransCount = 0, innerCountCheck = 0;
@@ -52,6 +53,7 @@ public class DataSyncHelper {
     public static LinkedHashMap<String, List> refreshtransactionsDataMap = new LinkedHashMap<>();
     private static String IMEINUMBER;
 
+    //Performing Master Sync
     public static synchronized void performMasterSync(final Context context, final boolean firstTimeInsertFinished, final ApplicationThread.OnComplete onComplete) {
         IMEINUMBER = CommonUtils.getIMEInumber(context);
         LinkedHashMap<String, String> syncDataMap = new LinkedHashMap<>();
@@ -135,6 +137,7 @@ public class DataSyncHelper {
         });
     }
 
+    //Performing Transaction Sync
     public static synchronized void performRefreshTransactionsSync(final Context context, final ApplicationThread.OnComplete onComplete) {
         countCheck = 0;
         transactionsCheck = 0;
@@ -171,6 +174,7 @@ public class DataSyncHelper {
 
     }
 
+    //Hitting Send Data to Server API
     public static void postTransactionsDataToCloud(final Context context, final String tableName, final DataAccessHandler dataAccessHandler, final ApplicationThread.OnComplete onComplete) {
 
         List cctransDataList = refreshtransactionsDataMap.get(tableName);
@@ -233,7 +237,7 @@ public class DataSyncHelper {
                     ProgressBar.hideProgressBar();
                     onComplete.execute(true, null, "Sync is success");
                     Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
-
+ 
             } else {
                 postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
             }
@@ -241,6 +245,7 @@ public class DataSyncHelper {
     }
 
 
+    //Preparing Send Data
     private static void getRefreshSyncTransDataMap(final Context context, final ApplicationThread.OnComplete onComplete) {
 
         final DataAccessHandler dataAccessHandler = new DataAccessHandler(context);

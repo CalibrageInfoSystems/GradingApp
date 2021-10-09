@@ -59,6 +59,7 @@ public class DataAccessHandler <T> {
         }
     }
 
+    //To Get Only One Int value from DB
     public Integer getOnlyOneIntValueFromDb(String query) {
         Log.v(LOG_TAG, "@@@ query " + query);
         Cursor mOprQuery = null;
@@ -80,7 +81,7 @@ public class DataAccessHandler <T> {
         }
         return null;
     }
-
+    //To Get Only One value from DB
     public String getOnlyOneValueFromDb(String query) {
         Log.v(LOG_TAG, "@@@ query " + query);
         Cursor mOprQuery = null;
@@ -104,6 +105,7 @@ public class DataAccessHandler <T> {
     }
 
 
+    //To insert Data received from Server
     public synchronized void insertData(boolean fromMaster, String tableName, List<LinkedHashMap> mapList, final ApplicationThread.OnComplete<String> oncomplete) {
         int checkCount = 0;
         try {
@@ -148,6 +150,8 @@ public class DataAccessHandler <T> {
             closeDataBase();
         }
     }
+
+    //Save Data into the table
     public synchronized void savedata(boolean fromMaster, String tableName, List<LinkedHashMap> mapList, final ApplicationThread.OnComplete<String> oncomplete) {
         int checkCount = 0;
         try {
@@ -193,13 +197,17 @@ public class DataAccessHandler <T> {
         }
     }
 
+    //Save Data
     public synchronized void saveData(String tableName, List<LinkedHashMap> mapList, final ApplicationThread.OnComplete<String> oncomplete) {
         savedata(false, tableName, mapList, oncomplete);
     }
+
+    //Insert Data
     public synchronized void insertData(String tableName, List<LinkedHashMap> mapList, final ApplicationThread.OnComplete<String> oncomplete) {
         insertData(false, tableName, mapList, oncomplete);
     }
 
+    //Delete Row in the Tables
     public synchronized void deleteRow(String tableName, String columnName, String value, boolean isWhere, final ApplicationThread.OnComplete<String> onComplete) {
         boolean isDataDeleted = true;
 //        if (!ApplicationThread.dbThreadCheck())
@@ -227,6 +235,7 @@ public class DataAccessHandler <T> {
         }
     }
 
+    //To get the count from table
     public String getCountValue(String query) {
 //        mDatabase = palm3FoilDatabase.getWritableDatabase();
         Cursor mOprQuery = null;
@@ -266,6 +275,7 @@ public class DataAccessHandler <T> {
     }
 
 
+    //Bulk Insert to the Table
     public boolean bulkinserttoTable(List<ContentValues> cv, final String tableName) {
         boolean isError = false;
         mDatabase.beginTransaction();
@@ -284,6 +294,7 @@ public class DataAccessHandler <T> {
         return isError;
     }
 
+    //To Get the Datya from the Table
     public void getGradingReportDetails(final String query, final ApplicationThread.OnComplete onComplete) {
         List<GradingReportModel> gradingReportDetails = new ArrayList<>();
         Cursor cursor = null;
@@ -338,6 +349,7 @@ public class DataAccessHandler <T> {
 
 
 
+    //To get user details
     public T getUserDetails(final String query, int dataReturnType) {
         UserDetails userDetails = null;
         Cursor cursor = null;
@@ -370,6 +382,7 @@ public class DataAccessHandler <T> {
         return (T) ((dataReturnType == 0) ? userDetails : userDataList);
     }
 
+    //To get the Grading Repository Details
     public T getGradingRepoDetails(final String query, final int type) {
         List<GradingFileRepository> gradingrepolist = new ArrayList<>();
         GradingFileRepository mgradingrepository = null;

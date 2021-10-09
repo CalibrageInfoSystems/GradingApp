@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 
+//Creating/Opening/Closing/Copying DB
 public class Palm3FoilDatabase extends SQLiteOpenHelper {
 
     public static final String LOG_TAG = Palm3FoilDatabase.class.getName();
@@ -130,7 +131,7 @@ public class Palm3FoilDatabase extends SQLiteOpenHelper {
     private void copyDataBase() throws IOException {
         File dbDir = new File(DB_PATH);
         if (!dbDir.exists()) {
-            dbDir.mkdir();
+            dbDir.mkdirs();
 
         }
         InputStream myInput = mContext.getAssets().open(DATABASE_NAME);

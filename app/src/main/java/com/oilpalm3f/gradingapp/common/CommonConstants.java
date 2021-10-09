@@ -3,6 +3,7 @@ package com.oilpalm3f.gradingapp.common;
 import java.util.ArrayList;
 import java.util.List;
 
+//Defining Common Constants
 public class CommonConstants {
     public static final String JPEG_FILE_SUFFIX = ".jpg";
     public static String IS_FRESH_INSTALL = "is_fresh_install";

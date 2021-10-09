@@ -22,6 +22,7 @@ import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 import com.oilpalm3f.gradingapp.cloudhelper.Log;
 import com.oilpalm3f.gradingapp.printer.BluetoothDevicesFragment;
 
+//To find the Bluetooth devices List
 public class BlueToothDevicesList extends AppCompatActivity {
 
     public static final String LOG_TAG = BlueToothDevicesList.class.getName();
@@ -99,7 +100,7 @@ public class BlueToothDevicesList extends AppCompatActivity {
         }, 2000);
 
     }
-
+    //To display the devices found
     private final BroadcastReceiver btDevicesFound = new BroadcastReceiver() {
 
         @Override

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+// To Display the USB Devices List
 public class UsbDevicesListFragment extends DialogFragment {
 
     public static final String LOG_TAG = UsbDevicesListFragment.class.getName();

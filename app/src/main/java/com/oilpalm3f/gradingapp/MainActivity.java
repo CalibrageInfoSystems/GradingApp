@@ -15,11 +15,15 @@ import com.oilpalm3f.gradingapp.ui.GradingReportActivity;
 import com.oilpalm3f.gradingapp.ui.QRScanActivity;
 import com.oilpalm3f.gradingapp.ui.RefreshSyncActivity;
 
+//Home Screen
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView scanImg, reportsImg, sync_logo;
     LinearLayout synclyt;
 
+
+    //Initializing the UI and there OnClick Listeners
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

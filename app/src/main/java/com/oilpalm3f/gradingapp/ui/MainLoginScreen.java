@@ -38,6 +38,8 @@ import es.dmoral.toasty.Toasty;
 import static com.oilpalm3f.gradingapp.datasync.helpers.DataManager.USER_DETAILS;
 import static com.oilpalm3f.gradingapp.datasync.helpers.DataManager.USER_VILLAGES;
 
+
+//Login Screen
 public class MainLoginScreen extends AppCompatActivity {
 
     public static final String LOG_TAG = MainLoginScreen.class.getName();
@@ -56,7 +58,7 @@ public class MainLoginScreen extends AppCompatActivity {
     LocationManager lm;
 
 
-
+//Oncreate with get User Details
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +124,7 @@ public class MainLoginScreen extends AppCompatActivity {
 //            }
 //        });
 
+        //SignIn Btn On Click Listener
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,6 +138,8 @@ public class MainLoginScreen extends AppCompatActivity {
                 }
             }
         });
+
+        //Sync Btn On Click Listener
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +154,7 @@ public class MainLoginScreen extends AppCompatActivity {
     }
 
 
+    //Initialize the UI
     private void initView() {
         imeiNumberTxt = (TextView) findViewById(R.id.imeiNumberTxt);
         versionnumbertxt = (TextView) findViewById(R.id.versionnumbertxt);
@@ -158,6 +164,8 @@ public class MainLoginScreen extends AppCompatActivity {
         signInBtn = (Button) findViewById(R.id.signInBtn);
     }
 
+
+    //Validations
     private boolean validateField() {
         if (TextUtils.isEmpty(userId)) {
             Toasty.error(this, "Please enter user id", Toast.LENGTH_SHORT).show();
@@ -172,6 +180,7 @@ public class MainLoginScreen extends AppCompatActivity {
         return true;
     }
 
+    //Perform mastersync
     public void startMasterSync() {
 
 
@@ -215,6 +224,7 @@ public class MainLoginScreen extends AppCompatActivity {
 
     }
 
+    //perform transaction sync
     public void transactionSync(){
         if (CommonUtils.isNetworkAvailable(MainLoginScreen.this)) {
             DataSyncHelper.performRefreshTransactionsSync(MainLoginScreen.this, new ApplicationThread.OnComplete() {

@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
 
+//Show/hide Progress Bar
 public class ProgressBar {
     private static final String LOG_TAG = ProgressBar.class.getName();
     private static ProgressDialog mProgressDialog;

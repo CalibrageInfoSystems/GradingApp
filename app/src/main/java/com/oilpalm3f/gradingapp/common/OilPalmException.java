@@ -1,5 +1,6 @@
 package com.oilpalm3f.gradingapp.common;
 
+//Exception
 public class OilPalmException  extends Exception
 {
 

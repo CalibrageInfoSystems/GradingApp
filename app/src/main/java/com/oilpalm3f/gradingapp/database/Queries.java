@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.oilpalm3f.gradingapp.common.CommonConstants;
 
+//Here we write Queries we use
 public class Queries {
     private static Queries instance;
     private String isActive;
@@ -222,8 +223,8 @@ public class Queries {
     public String getcastQuery() {
         return "SELECT Typecdid,desc FROM typecddmt where classtypeid= '8' and isActive ='true'";
     }
-    public String getTokenExistQuery(String tokenNumber, String fruittype) {
-        return "SELECT EXISTS(SELECT 1 FROM FFBGrading WHERE TokenNumber='" + tokenNumber + "' AND FruitType = '" + fruittype + "')";
+    public String getTokenExistQuery(String tokenNumber, String fruittype, String ccode) {
+        return "SELECT EXISTS(SELECT 1 FROM FFBGrading WHERE TokenNumber='" + tokenNumber + "' AND FruitType = '" + fruittype + "' AND CCCode = '" + ccode + "')";
     }
     public String getTokenSizeQuery() {
         return "Select COUNT(*) from FFBGrading where DATE(CreatedDate)= DATE('now')";

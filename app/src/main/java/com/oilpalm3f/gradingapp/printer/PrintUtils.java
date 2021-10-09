@@ -15,6 +15,7 @@ import com.android.print.sdk.PrinterInstance;
 import com.android.print.sdk.PrinterType;
 import com.android.print.sdk.Table;
 
+//Not using
 public class PrintUtils {
 
 //	public static void printText(Resources resources, PrinterInstance mPrinter) {

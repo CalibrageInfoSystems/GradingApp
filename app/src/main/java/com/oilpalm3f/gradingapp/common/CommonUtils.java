@@ -40,6 +40,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//Commonly used functions written here
 public class CommonUtils {
 
     public static final int REQUEST_CAM_PERMISSIONS = 1;
@@ -59,6 +60,8 @@ public class CommonUtils {
     };
     private static String LOG_TAG = CommonUtils.class.getName();
 
+
+    //To check is network available
     public static boolean isNetworkAvailable(final Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (null != connectivityManager) {
@@ -69,12 +72,14 @@ public class CommonUtils {
         return false;
     }
 
+    //Hides Keyboard
     public static void hideKeyPad(Context context, EditText editField) {
         final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editField.getWindowToken(), 0);
     }
 
 
+    //Loads the Image Filepath
     private static byte[] loadFile(File file) throws IOException {
         InputStream is = new FileInputStream(file);
 
@@ -99,6 +104,7 @@ public class CommonUtils {
         return bytes;
     }
 
+    //Converts image in filepath to base64
     public static String encodeFileToBase64Binary(File file)
             throws IOException {
 
@@ -107,6 +113,7 @@ public class CommonUtils {
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 
+    //To get Current Date & time
     public static String getcurrentDateTime(final String format) {
         Calendar c = Calendar.getInstance();
         String date;
@@ -128,6 +135,7 @@ public class CommonUtils {
         return false;
     }
 
+    //To check permissions are allowed or not
     public static boolean areAllPermissionsAllowedNew(final Context context, final String[] permissions) {
         boolean isAllPermissionsGranted = true;
         for (String permission : permissions) {
@@ -138,6 +146,8 @@ public class CommonUtils {
         }
         return isAllPermissionsGranted;
     }
+
+    //To get Imei number of the device
     public static String getIMEInumber(final Context context) {
         String deviceId;
         if (android.os.Build.VERSION.SDK_INT >= 29) {
@@ -148,7 +158,7 @@ public class CommonUtils {
         }
 
         return deviceId;
-       //return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
+     //  return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
        // return "3d67d4a83a85f9e6";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";
         //return "358525086759978";
@@ -159,6 +169,7 @@ public class CommonUtils {
         // return telephonyManager.getDeviceId();
     }
 
+    //To get app version
     public static String getAppVersion(final Context context) {
         PackageInfo pInfo = null;
         try {
@@ -170,6 +181,7 @@ public class CommonUtils {
         return pInfo.versionName;
     }
 
+    //To map the Key and Values
     public static LinkedHashMap<String, Object> toMap(JSONObject object) throws JSONException {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
@@ -188,6 +200,7 @@ public class CommonUtils {
         return map;
     }
 
+    //Converts JsonArray to List
     public static List<Object> toList(JSONArray array) throws JSONException {
         List<Object> list = new ArrayList<Object>();
         for (int i = 0; i < array.length(); i++) {
@@ -203,6 +216,7 @@ public class CommonUtils {
     }
 
 
+    //DB File Root Path
     public static String get3FFileRootPath() {
         String root = Environment.getExternalStorageDirectory().toString();
         File rootDirectory = new File(root + "/3F_Grading");

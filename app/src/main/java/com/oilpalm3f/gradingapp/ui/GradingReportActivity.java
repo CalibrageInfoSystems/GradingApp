@@ -60,6 +60,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
     private BluetoothDevicesFragment bluetoothDevicesFragment = null;
     private UsbDevicesListFragment usbDevicesListFragment = null;
 
+
+    //Oncreate with SetAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +83,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 //        SearchCollectionwithoutPlotQuery = Queries.getInstance().getCollectionCenterReportsWithOutPlot(currentDate, currentDate);
         updateLabel(0);
         updateLabel(1);
-   getCollectionCenterReports(searchQuery);
+        getGradingReports(searchQuery);
         CommonUtils.currentActivity = this;
         gradingReportRecyclerAdapter = new GradingReportAdapter(GradingReportActivity.this);
         gradingReportRecyclerAdapter.setonPrintSelected((this));
@@ -101,7 +103,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 //        totalNetWeightSum.setText(" "+totalNetWeight + " Kgs");
     }
 
-    public void getCollectionCenterReports(final String searchQuery) {
+    //To Get Gradnig Reports
+    public void getGradingReports(final String searchQuery) {
         ProgressBar.showProgressBar(this, "Please wait...");
         ApplicationThread.bgndPost(LOG_TAG, "getting reports data", new Runnable() {
             @Override
@@ -155,7 +158,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         });
     }
 
-
+//Intialize the UI & search funtionality
     private void initUI() {
         gradingReportsList = (RecyclerView) findViewById(R.id.grading_reports_list);
         searchBtn = (Button) findViewById(R.id.searchBtn);
@@ -186,7 +189,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
                         mReportsList.clear();
                         gradingReportRecyclerAdapter.notifyDataSetChanged();
                     }
-                    getCollectionCenterReports(searchQuery);
+                    getGradingReports(searchQuery);
                 }
             }
         });
@@ -195,6 +198,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
         fromDateEdt = (EditText) findViewById(R.id.fromDate);
         toDateEdt = (EditText) findViewById(R.id.toDate);
+
+        //From and To Date on Click listeners with DatePicker Dialogs
 
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -206,6 +211,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
                 updateLabel(0);
             }
         };
+
+
 
         final DatePickerDialog.OnDateSetListener toDate = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -238,6 +245,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
             }
         });
     }
+
+    //Update the from and to date labels
     private void updateLabel(int type) {
         String myFormat = "dd-MM-yyyy";
         String dateFormatter = "yyyy-MM-dd";
@@ -255,6 +264,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
     }
 
+    //On Print Option Selected
     @Override
     public void printOptionSelected(int position) {
 
@@ -285,6 +295,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
     }
 
+    //Letting know how many times data should Print
     @Override
     public void selectedDevice(PrinterInstance printerInstance) {
 
@@ -294,6 +305,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
     }
 
+    // When Printer type selected
     @Override
     public void onPrinterTypeSelected(int printerType) {
 
@@ -311,6 +323,7 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
 
     }
 
+    //Print Data
     public void printGradingData(PrinterInstance mPrinter, int printCount) {
 
         String fruitTypeNumber;
@@ -361,10 +374,10 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         StringBuilder sb = new StringBuilder();
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText(" 3F Oil Palm Agrotech PVT LTD " + "\n");
+        mPrinter.printText(" 3F OILPALM PVT LTD " + "\n");
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText("   FFB Grading Receipt" + "\n");
+        mPrinter.printText(" FFB Grading Receipt" + "\n");
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_LEFT);
         mPrinter.setCharacterMultiple(0, 0);
         mPrinter.setLeftMargin(15, 15);
@@ -577,6 +590,8 @@ public class GradingReportActivity extends AppCompatActivity implements onPrintO
         }
 
     }
+
+    //Generate QRCode
 
     public void print_qr_code(PrinterInstance mPrinter,String qrdata)
     {

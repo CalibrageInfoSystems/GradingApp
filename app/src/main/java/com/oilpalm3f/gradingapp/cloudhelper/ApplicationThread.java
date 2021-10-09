@@ -7,6 +7,11 @@ import android.util.Log;
 
 import java.util.concurrent.Future;
 
+/**
+ * Class for performing works in the background
+ *
+ */
+
 public final class ApplicationThread {
 
     private static final String LOG_TAG = ApplicationThread.class.getName();

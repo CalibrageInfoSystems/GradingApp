@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.android.print.sdk.PrinterInstance;
 
+//To operate the USB Printer and Pair the device
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class UsbOperation implements IPrinterOpertion {
 	private final static String TAG = "UsbOpertion";

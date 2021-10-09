@@ -8,6 +8,10 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class for allocating priorities for different runnables
+ *
+ */
 public class PriorityExecutor extends ThreadPoolExecutor {
     public PriorityExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit unit) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, new PriorityBlockingQueue<Runnable>(11, new PriorityTaskComparator<Important>()));

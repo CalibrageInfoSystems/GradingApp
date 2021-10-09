@@ -46,6 +46,7 @@ public class SplashScreen extends AppCompatActivity {
     };
     private SharedPreferences sharedPreferences;
 
+    //Creating DB and Master Sync
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
+    //Request Permissions Result
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -94,6 +96,7 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
+    //Perform Master Sync
     public void startMasterSync() {
 
         if (CommonUtils.isNetworkAvailable(this)) {
@@ -127,7 +130,7 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
-
+    //Db Upgrade Method
     public void dbUpgradeCall() {
         DataAccessHandler dataAccessHandler = new DataAccessHandler(SplashScreen.this, false);
         String count = dataAccessHandler.getCountValue(Queries.getInstance().UpgradeCount());

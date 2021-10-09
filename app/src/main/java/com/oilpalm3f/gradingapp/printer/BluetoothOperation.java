@@ -17,6 +17,7 @@ import com.oilpalm3f.gradingapp.common.CommonUtils;
 
 import java.lang.reflect.Method;
 
+//To operate the Bluetooth Printer and Pair the device
 public class BluetoothOperation implements IPrinterOpertion {
 	private static final String TAG = "BluetoothOpertion";
 	private BluetoothAdapter adapter;

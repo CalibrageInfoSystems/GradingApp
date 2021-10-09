@@ -35,6 +35,10 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
 
+/*
+ * Class for communicating with the sever.
+ */
+
 public class HttpClient {
 
     public static final String OFFLINE = "3";

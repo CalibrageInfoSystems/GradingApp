@@ -3,6 +3,7 @@ package com.oilpalm3f.gradingapp.helper;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+//Helps to Put/Get Data Types
 public class PrefUtil {
 
     public static void putString(Context context, String key, String value, String pref) {

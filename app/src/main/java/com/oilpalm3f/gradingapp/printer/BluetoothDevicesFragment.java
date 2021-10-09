@@ -36,6 +36,7 @@ import com.oilpalm3f.gradingapp.utils.UiUtils;
 
 import java.util.Set;
 
+//To Display BluetoothDevices
 public class BluetoothDevicesFragment extends DialogFragment {
 
     public static final String LOG_TAG = BluetoothDevicesFragment.class.getName();

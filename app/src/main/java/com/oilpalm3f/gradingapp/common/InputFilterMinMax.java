@@ -3,6 +3,8 @@ package com.oilpalm3f.gradingapp.common;
 import android.text.InputFilter;
 import android.text.Spanned;
 
+//To Restrict Input from Min Value to Max Value
+
 public class InputFilterMinMax implements InputFilter {
 
     private int min, max;

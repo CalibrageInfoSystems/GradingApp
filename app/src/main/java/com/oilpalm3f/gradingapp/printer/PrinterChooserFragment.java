@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.RelativeLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.DialogFragment;
 
 import com.oilpalm3f.gradingapp.R;
 
-/**
- * Created by siva on 07/03/17.
- */
+//To choose the Printer Type
 
 public class PrinterChooserFragment  extends DialogFragment {
 

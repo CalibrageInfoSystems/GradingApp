@@ -75,12 +75,13 @@ import static com.oilpalm3f.gradingapp.common.CommonUtils.REQUEST_CAM_PERMISSION
 
 import org.apache.commons.lang3.StringUtils;
 
+//Screen where Grading happens
 public class GradingActivity extends AppCompatActivity implements BluetoothDevicesFragment.onDeviceSelected, onPrinterType, UsbDevicesListFragment.onUsbDeviceSelected  {
 
     private static final String LOG_TAG = GradingActivity.class.getName();
 
     String qrvalue;
-    public TextView tokenNumber, millcode, type, grossweight,tokendate;
+    public TextView tokenNumber, millcode, type, grossweight,tokendate, weighBridgetokenNumber;
     String[] splitString;
 
     EditText unripen, underripe, ripen, overripe, diseased,
@@ -138,6 +139,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         type = findViewById(R.id.type);
         grossweight = findViewById(R.id.grossweight);
         tokendate = findViewById(R.id.tokendate);
+        weighBridgetokenNumber = findViewById(R.id.weighBridgetokenNumber);
 
         unripen = findViewById(R.id.unripen);
         underripe = findViewById(R.id.underripe);
@@ -191,8 +193,9 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             Log.d("QR Code Value is", qrvalue + "");
         }
 
+        //Splitting the String
       splitString = qrvalue.split("/");
-//
+
         Log.d("String1", splitString[0] + "");
         Log.d("String2", splitString[1] + "");
         Log.d("String3", splitString[2] + "");
@@ -212,7 +215,9 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 //        Log.d("String4", splitString[3] + "");
 //        //Log.d("String5", splitString[4] + "");
 
-        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0], splitString[2]));
+        //Checking whether token exists or not
+
+        tokenexists = dataAccessHandler.getOnlyOneIntValueFromDb(Queries.getInstance().getTokenExistQuery(splitString[0], splitString[2], splitString[1]));
         Log.d("tokenexists",tokenexists + "");
 
         if (tokenexists == 1){
@@ -226,6 +231,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 //        Log.d("printtokenssize", printtokenssize + "");
 
 
+        //Getting the Token Date
         firsteight = firstEight(splitString[0]);
         firsteight = firsteight.substring(0, 4) + "-" + firsteight.substring(4, firsteight.length());
         firsteight = firsteight.substring(0, 7) + "-" + firsteight.substring(7, firsteight.length());
@@ -243,6 +249,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
          tokenCount = tokenNumber.getText().toString().substring(11);
         Log.d("tokenCount", tokenCount + "");
 
+        weighBridgetokenNumber.setText(tokenCount);
+
 
         tokenNumber.setText(splitString[0] + "");
         millcode.setText(splitString[1] + "");
@@ -251,6 +259,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         tokendate.setText(firsteight + "");
 
 
+        //Binding data to isloosefruitavailable spinner and onclick listener
         String[] isloosefruitavailableArray = getResources().getStringArray(R.array.yesOrNo_values);
         List<String> isloosefruitavailableList = Arrays.asList(isloosefruitavailableArray);
         ArrayAdapter<String> isloosefruitavailableAdapter = new ArrayAdapter<>(GradingActivity.this, android.R.layout.simple_spinner_item, isloosefruitavailableList);
@@ -275,6 +284,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
             }
         });
+
+        //Image onclick listener
         slipImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -292,168 +303,18 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
             }
         });
 
+        //submit btn onclick listener
         submit.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (validate()){
-
-//                    String base64String = null;
-//
-//                    try {
-//                        Log.d("Base64String", CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath)));
-//                        base64String = CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-                    // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
-
-
-                    List<LinkedHashMap> repodetails = new ArrayList<>();
-                    LinkedHashMap maprepo = new LinkedHashMap();
-
-//                    maprepo.put("TokenNumber", splitString[0] + "");
-//                    maprepo.put("CCCode", splitString[1] + "");
-//                    maprepo.put("FruitType", splitString[2] + "");
-//                    maprepo.put("GrossWeight", splitString[3] + "");
-//                    maprepo.put("FileName", splitString[1] + "");
-//                    maprepo.put("TokenNumber", "1234");
-//                    maprepo.put("CCCode", "CCGVG01");
-//                    maprepo.put("FruitType",  "CType");
-//                    maprepo.put("GrossWeight", "120");
-//                    maprepo.put("FileName",  "CCGVG01");
-
-                    maprepo.put("ImageString", "null");
-                    maprepo.put("TokenNumber", splitString[0] + "");
-                    maprepo.put("CCCode", splitString[1] + "");
-                    maprepo.put("FruitType", splitString[2] + "");
-                    maprepo.put("GrossWeight", splitString[3] + "");
-
-                    maprepo.put("FileName", splitString[1] + "");
-
-                    maprepo.put("FileLocation", mCurrentPhotoPath);
-                    maprepo.put("FileExtension", ".jpg");
-
-                    maprepo.put("CreatedByUserId", CommonConstants.USER_ID);
-                    maprepo.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
-
-                    maprepo.put("ServerUpdatedStatus", false);
-
-                    repodetails.add(maprepo);
-
-                    dataAccessHandler.saveData("FFBGradingRepository", repodetails, new ApplicationThread.OnComplete<String>() {
-                        @Override
-                        public void execute(boolean success, String result, String msg) {
-
-                            if (success) {
-                                Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_FFBGradingRepository INSERT COMPLETED");
-                            } else {
-                                Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-                    List<LinkedHashMap> details = new ArrayList<>();
-                    LinkedHashMap map = new LinkedHashMap();
-
-//                    map.put("TokenNumber", "1234");
-//                    map.put("CCCode", "CCGVG01");
-//                    map.put("FruitType",  "CType");
-//                    map.put("GrossWeight", "120");
-//                    map.put("TokenDate",  "2021-08-19T15:44:54.527");
-
-
-
-                    map.put("TokenNumber", splitString[0] + "");
-                    map.put("CCCode", splitString[1] + "");
-                    map.put("FruitType", splitString[2] + "");
-                    map.put("GrossWeight", splitString[3] + "");
-                    map.put("TokenDate", firsteight + "");
-
-
-                    map.put("UnRipen", unripen.getText().toString());
-                    map.put("UnderRipe", underripe.getText().toString());
-                    map.put("Ripen", ripen.getText().toString());
-                    map.put("OverRipe", overripe.getText().toString());
-                    map.put("Diseased", diseased.getText().toString());
-                    map.put("EmptyBunches", emptybunches.getText().toString());
-                    map.put("FFBQualityLong", longstalk.getText().toString());
-                    map.put("FFBQualityMedium", mediumstalk.getText().toString());
-                    map.put("FFBQualityShort", shortstalk.getText().toString());
-                    map.put("FFBQualityOptimum", optimum.getText().toString());
-                    int isfruitavailable = 0;
-
-                    if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1){
-
-                        isfruitavailable = 1;
-                    }else if (isloosefruitavailable_spinner.getSelectedItemPosition() == 2){
-                        isfruitavailable = 0;
-                    }
-
-                    map.put("LooseFruit", isfruitavailable);
-
-                    if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1) {
-
-                        map.put("LooseFruitWeight", loosefruitweight.getText().toString());
-                    }
-
-                    map.put("RejectedBunches",rejectedBunches.getText().toString());
-                    map.put("GraderName", gradingdoneby.getText().toString());
-                    map.put("CreatedByUserId", CommonConstants.USER_ID);
-                    map.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
-
-                    details.add(map);
-
-                    dataAccessHandler.saveData("FFBGrading", details, new ApplicationThread.OnComplete<String>() {
-                        @Override
-                        public void execute(boolean success, String result, String msg) {
-
-                            if (success) {
-                                Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT COMPLETED");
-
-                                if (CommonUtils.isNetworkAvailable(GradingActivity.this)) {
-                                    DataSyncHelper.performRefreshTransactionsSync(GradingActivity.this, new ApplicationThread.OnComplete() {
-                                        @Override
-                                        public void execute(boolean success, Object result, String msg) {
-                                            if (success) {
-                                                ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
-                                                        startActivity(new Intent(GradingActivity.this, MainActivity.class));
-                                                    }
-                                                });
-                                            } else {
-                                                ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        UiUtils.showCustomToastMessage("Data sync failed", GradingActivity.this, 1);
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    startActivity(new Intent(GradingActivity.this, MainActivity.class));
-                                }
-                                //Toast.makeText(GradingActivity.this, "Submit Successfully", Toast.LENGTH_SHORT).show();
-
-//                                FragmentManager fm = getSupportFragmentManager();
-//                                PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
-//                                printerChooserFragment.setPrinterType(GradingActivity.this);
-//                                printerChooserFragment.show(fm, "bluetooth fragment");
-                              //  finish();
-
-                            } else {
-                                Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-                } else {
-                    Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT Failed");
-                    Toast.makeText(GradingActivity.this, "Submit Failedd", Toast.LENGTH_SHORT).show();
+//                    enablePrintBtn(false);
+//                    submit.setAlpha(0.5f);
+                    FragmentManager fm = getSupportFragmentManager();
+                    PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
+                    printerChooserFragment.setPrinterType(GradingActivity.this);
+                    printerChooserFragment.show(fm, "bluetooth fragment");
                 }
             }
         });
@@ -489,6 +350,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         startActivityForResult(takePictureIntent, actionCode);
     }
 
+    //Set Imagepath
     private File setUpPhotoFile() throws IOException {
 
         File f = createImageFile();
@@ -499,6 +361,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         return f;
     }
 
+    //Create file for image
     private File createImageFile() throws IOException {
         String root = Environment.getExternalStorageDirectory().toString();
         File rootDirectory = new File(root + "/3F_GradingPictures");
@@ -514,6 +377,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         finalFile = new File(pictureDirectory, Calendar.getInstance().getTimeInMillis() + CommonConstants.JPEG_FILE_SUFFIX);
         return finalFile;
     }
+
+    //Validations
     public boolean validate() {
 
         if (TextUtils.isEmpty(unripen.getText().toString())) {
@@ -591,6 +456,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         return true;
     }
+
+    //Handling on Activity Result
     @SuppressLint("MissingSuperCall")
     @Override
     public void onActivityResult ( int requestCode, int resultCode, Intent data){
@@ -621,6 +488,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     }
 
+
+    //Set image to the imageview
     private void setPic()
     {
         /* There isn't enough memory to open up more than a couple camera photos */
@@ -673,6 +542,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         this.sendBroadcast(mediaScanIntent);
     }
 
+    //Letting know how many times data should Print
     @Override
     public void selectedDevice(PrinterInstance printerInstance) {
 
@@ -688,6 +558,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     }
 
+    //Enable/Disable Print Btn
     public void enablePrintBtn(final boolean enable) {
         ApplicationThread.uiPost(LOG_TAG, "updating ui", new Runnable() {
             @Override
@@ -705,6 +576,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         enablePrintBtn(rePrint);
     }
 
+    //When Printer type selected
     @Override
     public void onPrinterTypeSelected(int printerType) {
 
@@ -722,16 +594,17 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     }
 
+    //Print Data
     public void printGradingData(PrinterInstance mPrinter, boolean isReprint, int printCount) {
 
         mPrinter.init();
         StringBuilder sb = new StringBuilder();
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText(" 3F Oil Palm Agrotech PVT LTD " + "\n");
+        mPrinter.printText(" 3F OILPALM PVT LTD " + "\n");
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_CENTER);
         mPrinter.setCharacterMultiple(0, 1);
-        mPrinter.printText("   FFB Grading Receipt" + "\n");
+        mPrinter.printText(" FFB Grading Receipt" + "\n");
         mPrinter.setPrinter(PrinterConstants.Command.ALIGN, PrinterConstants.Command.ALIGN_LEFT);
         mPrinter.setCharacterMultiple(0, 0);
         mPrinter.setLeftMargin(15, 15);
@@ -923,36 +796,13 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         } finally {
             if (printSuccess) {
                 Toast.makeText(GradingActivity.this, "Print Success", Toast.LENGTH_SHORT).show();
-//                if (CommonUtils.isNetworkAvailable(GradingActivity.this)) {
-//                    DataSyncHelper.performRefreshTransactionsSync(GradingActivity.this, new ApplicationThread.OnComplete() {
-//                        @Override
-//                        public void execute(boolean success, Object result, String msg) {
-//                            if (success) {
-//                                ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
-//                                        startActivity(new Intent(GradingActivity.this, MainActivity.class));
-//                                    }
-//                                });
-//                            } else {
-//                                ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        UiUtils.showCustomToastMessage("Data sync failed", GradingActivity.this, 1);
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    });
-//                } else {
-//                    startActivity(new Intent(GradingActivity.this, MainActivity.class));
-//                }
+                saveGradingData();
             }
         }
 
     }
 
+    //Generate QRCode
     public void print_qr_code(PrinterInstance mPrinter,String qrdata)
     {
         int store_len = qrdata.length() + 3;
@@ -1007,10 +857,13 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
     }
 
+    //Split String method
     public String firstEight(String str) {
         return str.length() < 8 ? str : str.substring(0, 8);
     }
 
+
+    //Dialog Method
     public void showDialog(Activity activity, String msg) {
         final Dialog dialog = new Dialog(activity, R.style.DialogSlideAnim);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1036,6 +889,163 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                 ((Animatable) img.getDrawable()).start();
             }
         }, 500);
+    }
+
+    //Insert and Send to Server
+    public void saveGradingData() {
+
+//                    String base64String = null;
+//
+//                    try {
+//                        Log.d("Base64String", CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath)));
+//                        base64String = CommonUtils.encodeFileToBase64Binary(new File(mCurrentPhotoPath));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+
+        // Toast.makeText(GradingActivity.this, "Submit Success", Toast.LENGTH_SHORT).show();
+
+
+        List<LinkedHashMap> repodetails = new ArrayList<>();
+        LinkedHashMap maprepo = new LinkedHashMap();
+
+//                    maprepo.put("TokenNumber", splitString[0] + "");
+//                    maprepo.put("CCCode", splitString[1] + "");
+//                    maprepo.put("FruitType", splitString[2] + "");
+//                    maprepo.put("GrossWeight", splitString[3] + "");
+//                    maprepo.put("FileName", splitString[1] + "");
+//                    maprepo.put("TokenNumber", "1234");
+//                    maprepo.put("CCCode", "CCGVG01");
+//                    maprepo.put("FruitType",  "CType");
+//                    maprepo.put("GrossWeight", "120");
+//                    maprepo.put("FileName",  "CCGVG01");
+
+        maprepo.put("ImageString", "null");
+        maprepo.put("TokenNumber", splitString[0] + "");
+        maprepo.put("CCCode", splitString[1] + "");
+        maprepo.put("FruitType", splitString[2] + "");
+        maprepo.put("GrossWeight", splitString[3] + "");
+
+        maprepo.put("FileName", splitString[1] + "");
+
+//                    maprepo.put("TokenNumber", "202109231406");
+//                    maprepo.put("CCCode", "MILLAP01");
+//                    maprepo.put("FruitType",  "02");
+//                    maprepo.put("GrossWeight", "96000");
+//                    maprepo.put("FileName",  "MILLAP01");
+
+
+        maprepo.put("FileLocation", mCurrentPhotoPath);
+        maprepo.put("FileExtension", ".jpg");
+
+        maprepo.put("CreatedByUserId", CommonConstants.USER_ID);
+        maprepo.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
+
+        maprepo.put("ServerUpdatedStatus", false);
+
+        repodetails.add(maprepo);
+
+        dataAccessHandler.saveData("FFBGradingRepository", repodetails, new ApplicationThread.OnComplete<String>() {
+            @Override
+            public void execute(boolean success, String result, String msg) {
+
+                if (success) {
+                    Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_FFBGradingRepository INSERT COMPLETED");
+                } else {
+                    Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        List<LinkedHashMap> details = new ArrayList<>();
+        LinkedHashMap map = new LinkedHashMap();
+
+//                    map.put("TokenNumber", "202109231406");
+//                    map.put("CCCode", "MILLAP01");
+//                    map.put("FruitType",  "02");
+//                    map.put("GrossWeight", "96000");
+//                    map.put("TokenDate",  "2021-09-23");
+
+
+
+        map.put("TokenNumber", splitString[0] + "");
+        map.put("CCCode", splitString[1] + "");
+        map.put("FruitType", splitString[2] + "");
+        map.put("GrossWeight", splitString[3] + "");
+        map.put("TokenDate", firsteight + "");
+
+
+        map.put("UnRipen", unripen.getText().toString());
+        map.put("UnderRipe", underripe.getText().toString());
+        map.put("Ripen", ripen.getText().toString());
+        map.put("OverRipe", overripe.getText().toString());
+        map.put("Diseased", diseased.getText().toString());
+        map.put("EmptyBunches", emptybunches.getText().toString());
+        map.put("FFBQualityLong", longstalk.getText().toString());
+        map.put("FFBQualityMedium", mediumstalk.getText().toString());
+        map.put("FFBQualityShort", shortstalk.getText().toString());
+        map.put("FFBQualityOptimum", optimum.getText().toString());
+        int isfruitavailable = 0;
+
+        if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1){
+
+            isfruitavailable = 1;
+        }else if (isloosefruitavailable_spinner.getSelectedItemPosition() == 2){
+            isfruitavailable = 0;
+        }
+
+        map.put("LooseFruit", isfruitavailable);
+
+        if (isloosefruitavailable_spinner.getSelectedItemPosition() == 1) {
+
+            map.put("LooseFruitWeight", loosefruitweight.getText().toString());
+        }
+
+        map.put("RejectedBunches",rejectedBunches.getText().toString());
+        map.put("GraderName", gradingdoneby.getText().toString());
+        map.put("CreatedByUserId", CommonConstants.USER_ID);
+        map.put("CreatedDate", CommonUtils.getcurrentDateTime(CommonConstants.DATE_FORMAT_DDMMYYYY_HHMMSS));
+
+        details.add(map);
+
+        dataAccessHandler.saveData("FFBGrading", details, new ApplicationThread.OnComplete<String>() {
+            @Override
+            public void execute(boolean success, String result, String msg) {
+
+                if (success) {
+                    Log.d(GradingActivity.class.getSimpleName(), "==>  Analysis ==> TABLE_Grading INSERT COMPLETED");
+                    if (CommonUtils.isNetworkAvailable(GradingActivity.this)) {
+                        DataSyncHelper.performRefreshTransactionsSync(GradingActivity.this, new ApplicationThread.OnComplete() {
+                            @Override
+                            public void execute(boolean success, Object result, String msg) {
+                                if (success) {
+                                    ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
+                                            startActivity(new Intent(GradingActivity.this, MainActivity.class));
+                                        }
+                                    });
+                                } else {
+                                    ApplicationThread.uiPost(LOG_TAG, "transactions sync failed message", new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            UiUtils.showCustomToastMessage("Data sync failed", GradingActivity.this, 1);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        startActivity(new Intent(GradingActivity.this, MainActivity.class));
+                    }
+
+
+                } else {
+                    Toast.makeText(GradingActivity.this, "Submit Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 }

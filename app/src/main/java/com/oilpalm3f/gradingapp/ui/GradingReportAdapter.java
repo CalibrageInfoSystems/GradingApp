@@ -69,6 +69,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         return myHolder;
     }
 
+    //Binding Data to fields
     @Override
     public void onBindViewHolder(CollectionReportViewHolder holder, final int position) {
 
@@ -130,7 +131,7 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             e.printStackTrace();
         }
 
-
+//Created QrCode String
         String hashString = mList.get(position).getTokenNumber()+"/"+mList.get(position).getCCCode()+"/"+fruitTypeNumber+"/"+mList.get(position).getGrossWeight()+"/"+requiredvaluee+"/"+
                 mList.get(position).getUnRipen()+"/"+mList.get(position).getUnderRipe()
                 +"/"+mList.get(position).getRipen()+"/"+mList.get(position).getOverRipe()+"/"+mList.get(position).getDiseased()+"/"+mList.get(position).getEmptyBunches()+"/"
@@ -186,12 +187,15 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
 
         });
 
+        String tokenCount = mList.get(position).getTokenNumber().substring(11);
+        Log.d("tokenCount", tokenCount + "");
+
         holder.tvtokennumber.setText(item.getTokenNumber().trim());
         holder.tv_cccode.setText(item.getCCCode().trim());
        holder.tvFruitType.setText(fruitType);
         holder.tvgrossweight.setText(item.getGrossWeight().trim() + " (Kgs)" );
+        holder.tvweighbridgetokennumber.setText(tokenCount);
 //        String plotCodes = TextUtils.join(", ",dataAccessHandler.getListOfCodes(Queries.getInstance().getPlotCodes(item.getCode())).toArray());
-
 
 
         try {
@@ -325,6 +329,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
         private TextView tvFruitType;
         private TextView tvgrossweight;
         private TextView tvtokendate;
+        private TextView tvweighbridgetokennumber;
+
         private TextView tvunripen;
         private TextView tvunderripe;
         private TextView tvripen;
@@ -346,6 +352,8 @@ public class GradingReportAdapter extends RecyclerView.Adapter<GradingReportAdap
             tvFruitType = (TextView) view.findViewById(R.id.tvFruitType);
             tvgrossweight = (TextView) view.findViewById(R.id.tvgrossweight);
             tvtokendate = (TextView) view.findViewById(R.id.tvtokendate);
+            tvweighbridgetokennumber = (TextView) view.findViewById(R.id.tvweighbridgetokennumber);
+
             tvunripen = (TextView) view.findViewById(R.id.tvunripen);
             tvunderripe = (TextView) view.findViewById(R.id.tvunderripe);
             tvripen = (TextView) view.findViewById(R.id.tvripen);

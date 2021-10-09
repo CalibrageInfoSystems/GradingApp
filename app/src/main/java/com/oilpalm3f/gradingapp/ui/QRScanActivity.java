@@ -15,6 +15,8 @@ import com.oilpalm3f.gradingapp.R;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
+
+//To Scan the QR Code and handle the result
 public class QRScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
 
     ZXingScannerView scannerView;

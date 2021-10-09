@@ -23,6 +23,7 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
+//Sync Activities can be done from this screen
 public class RefreshSyncActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = RefreshSyncActivity.class.getName();
@@ -48,7 +49,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
 
         bindData();
 
-
+        //Master Sync
         btnmastersync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +100,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
         });
 
 
+        //Sends Data to Server
         btnsend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,6 +150,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
 
     }
 
+    //Binds Data to the field
     private void bindData() {
         try {
 

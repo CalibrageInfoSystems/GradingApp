@@ -24,9 +24,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by siva on 07/04/17.
- */
+//Compressing the Image, Rotating and Calculating the Size
+
 
 public class ImageUtility {
     public static String convertBitmapToString(Bitmap bitmap) {
