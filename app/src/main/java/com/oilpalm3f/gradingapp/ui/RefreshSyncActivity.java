@@ -3,7 +3,9 @@ package com.oilpalm3f.gradingapp.ui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,9 @@ import android.widget.Toast;
 
 import com.oilpalm3f.gradingapp.R;
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
+import com.oilpalm3f.gradingapp.cloudhelper.CloudDataHandler;
+import com.oilpalm3f.gradingapp.cloudhelper.Config;
+import com.oilpalm3f.gradingapp.common.CommonConstants;
 import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.Queries;
@@ -19,6 +24,7 @@ import com.oilpalm3f.gradingapp.datasync.helpers.DataSyncHelper;
 import com.oilpalm3f.gradingapp.uihelper.ProgressBar;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
+import java.io.File;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -29,7 +35,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
     private static final String LOG_TAG = RefreshSyncActivity.class.getName();
 
     private TextView tvgradingfilerepository;
-    private Button btnsend, btnmastersync;
+    private Button btnsend, btnmastersync, btnDBcopy;
     private DataAccessHandler dataAccessHandler;
     private boolean isDataUpdated = false;
 
@@ -45,6 +51,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
         dataAccessHandler = new DataAccessHandler(this);
         tvgradingfilerepository = findViewById(R.id.gradingrepcount);
         btnsend = findViewById(R.id.btsynctoserver);
+        btnDBcopy = findViewById(R.id.btcopydatabase);
         btnmastersync = findViewById(R.id.btnmastersync);
 
         bindData();
@@ -148,6 +155,13 @@ public class RefreshSyncActivity extends AppCompatActivity {
             }
         });
 
+        btnDBcopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertDialog();
+            }
+        });
+
     }
 
     //Binds Data to the field
@@ -159,6 +173,108 @@ public class RefreshSyncActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showAlertDialog() {
+        final Dialog dialog = new Dialog(RefreshSyncActivity.this);
+        dialog.setContentView(R.layout.custom_alert_dailog);
+
+        Button yesDialogButton = dialog.findViewById(R.id.Yes);
+        Button noDialogButton = dialog.findViewById(R.id.No);
+        TextView msg = dialog.findViewById(R.id.test);
+        yesDialogButton.setTextColor(getResources().getColor(R.color.green));
+        noDialogButton.setTextColor(getResources().getColor(R.color.btnPressedColor));
+        msg.setText("Do you want to upload data base to server ?");
+        // if button is clicked, close the custom dialog
+        yesDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CommonUtils.isNetworkAvailable(RefreshSyncActivity.this)) {
+                    dialog.dismiss();
+                    ProgressBar.showProgressBar(RefreshSyncActivity.this, "uploading database...");
+                    CommonUtils.copyFile(RefreshSyncActivity.this);
+                    uploadDatabaseFile();
+                } else {
+                    dialog.dismiss();
+                    UiUtils.showCustomToastMessage("Please check network connection", RefreshSyncActivity.this, 1);
+                }
+            }
+        });
+        dialog.show();
+        noDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+//                        Toast.makeText(getApplicationContext(),"Dismissed..!!",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void uploadDatabaseFile() {
+        ApplicationThread.bgndPost(LOG_TAG, "upload database..", new Runnable() {
+            @Override
+            public void run() {
+                uploadDataBase(getDbFileToUpload(), new ApplicationThread.OnComplete<String>() {
+                    @Override
+                    public void execute(boolean success, String result, String msg) {
+                        ProgressBar.hideProgressBar();
+                        if (success) {
+                            Log.v(LOG_TAG, "@@@ 3f db file upload success");
+                            CommonUtils.showToast("3f db file uploaded successfully", RefreshSyncActivity.this);
+                        } else {
+                            Log.v(LOG_TAG, "@@@ 3f db file upload failed due to " + msg);
+                            CommonUtils.showToast("3f db file upload failed due to" + msg, RefreshSyncActivity.this);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void uploadDataBase(final File uploadDbFile, final ApplicationThread.OnComplete<String> onComplete) {
+        if (null != uploadDbFile) {
+            final long nanoTime = System.nanoTime();
+            final String filePathToSave = "/sdcard/3f_" + CommonConstants.TAB_ID + "_" + nanoTime + "_v_" + CommonUtils.getAppVersion(RefreshSyncActivity.this) + ".gzip";
+            final File toZipFile = getDbFileToUpload();
+            CommonUtils.gzipFile(toZipFile, filePathToSave, new ApplicationThread.OnComplete<String>() {
+                @Override
+                public void execute(boolean success, String result, String msg) {
+                    if (success) {
+                        File dir = Environment.getExternalStorageDirectory();
+                        File uploadFile = new File(dir, "3f_" + CommonConstants.TAB_ID + "_" + nanoTime + "_v_" + CommonUtils.getAppVersion(RefreshSyncActivity.this) + ".gzip");
+                        Log.v(LOG_TAG, "@@@ file size " + uploadFile.length());
+                        if (uploadFile != null) {
+                            CloudDataHandler.uploadFileToServer(uploadFile, Config.live_url + Config.updatedbFile, new ApplicationThread.OnComplete<String>() {
+                                @Override
+                                public void execute(boolean success, String result, String msg) {
+                                    onComplete.execute(success, result, msg);
+                                }
+                            });
+                        } else {
+                            onComplete.execute(false, "failed", "data base is empty");
+                        }
+
+                    } else {
+                        onComplete.execute(success, result, msg);
+                    }
+                }
+            });
+        } else {
+            onComplete.execute(false, "file upload failed", "null database");
+        }
+
+    }
+
+    public File getDbFileToUpload() {
+        try {
+//            File dir = Environment.getExternalStorageDirectory();
+            File dbFileToUpload = new File("/sdcard/3F_Grading/3F_Database/3foilpalm.sqlite");
+            return dbFileToUpload;
+        } catch (Exception e) {
+            android.util.Log.w("Settings Backup", e);
+        }
+        return null;
     }
 
 }

@@ -100,4 +100,11 @@
         <item name="android:windowAnimationStyle">@style/DialogSlideAnim</item>
     </style>
 
+    <style name="custom_dialog_normal">
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/entry_view</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
 </resources>
