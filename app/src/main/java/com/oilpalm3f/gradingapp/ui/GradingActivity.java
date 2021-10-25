@@ -121,6 +121,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         toolbar.setTitle("Grading Screen");
         setSupportActionBar(toolbar);
 
+        CommonUtils.currentActivity = this;
+
         dataAccessHandler = new DataAccessHandler(GradingActivity.this);
 
         //Log.d("FirstEight",firstEight(somestring));
@@ -315,6 +317,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                     PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
                     printerChooserFragment.setPrinterType(GradingActivity.this);
                     printerChooserFragment.show(fm, "bluetooth fragment");
+                   // saveGradingData();
                 }
             }
         });

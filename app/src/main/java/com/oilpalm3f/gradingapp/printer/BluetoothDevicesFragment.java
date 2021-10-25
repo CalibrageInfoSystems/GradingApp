@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -251,9 +252,10 @@ public class BluetoothDevicesFragment extends DialogFragment {
                     isConnected = false;
                     ProgressBar.hideProgressBar();
                     if (connectionCount <= 1) {
+                    //Toast.makeText(getContext(), "connect failed...please try again", Toast.LENGTH_SHORT).show();
                         UiUtils.showCustomToastMessage("connect failed...please try again", (null != getActivity()) ? getActivity() : CommonUtils.currentActivity, 1);
                         establishBtConnection(true);
-                        onDeviceSelected.enablingPrintButton(false);
+                        //onDeviceSelected.enablingPrintButton(false);
                     } else {
                         onDeviceSelected.enablingPrintButton(true);
                     }

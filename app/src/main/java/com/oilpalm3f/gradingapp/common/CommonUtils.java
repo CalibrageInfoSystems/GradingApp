@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -25,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -163,8 +165,8 @@ public class CommonUtils {
             deviceId = mTelephony.getDeviceId();
         }
 
-        return deviceId;
-     //  return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
+       // return deviceId;
+       return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
        // return "3d67d4a83a85f9e6";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";
         //return "358525086759978";

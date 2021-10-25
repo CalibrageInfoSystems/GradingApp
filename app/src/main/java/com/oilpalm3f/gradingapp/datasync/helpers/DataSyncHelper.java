@@ -214,6 +214,7 @@ public class DataSyncHelper {
                         ApplicationThread.uiPost(LOG_TAG, "Sync is failed", new Runnable() {
                             @Override
                             public void run() {
+                                ProgressBar.hideProgressBar();
                                 UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
                             }
                         });

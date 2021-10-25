@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.oilpalm3f.gradingapp.cloudhelper.ApplicationThread;
@@ -11,7 +13,11 @@ import com.oilpalm3f.gradingapp.common.CommonUtils;
 import com.oilpalm3f.gradingapp.dbmodels.GradingFileRepository;
 import com.oilpalm3f.gradingapp.dbmodels.GradingReportModel;
 import com.oilpalm3f.gradingapp.dbmodels.UserDetails;
+import com.oilpalm3f.gradingapp.utils.ImageUtility;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -392,12 +398,30 @@ public class DataAccessHandler <T> {
             cursor = mDatabase.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
+
+
                     mgradingrepository = new GradingFileRepository();
 
                     String filelocation = cursor.getString(cursor.getColumnIndex("FileLocation"));
+
+//                    File imagefile = new File(filelocation);
+//                    FileInputStream fis = null;
+//                    try {
+//                        fis = new FileInputStream(imagefile);
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    Bitmap bm = BitmapFactory.decodeStream(fis);
+//                    bm = ImageUtility.rotatePicture(90, bm);
+//                    String base64string = ImageUtility.convertBitmapToString(bm);
+//                    mgradingrepository.setImageString(base64string);
+
+
                     if(filelocation != null){
                         try{
                             mgradingrepository.setImageString(CommonUtils.encodeFileToBase64Binary(new File(filelocation)));
+
                         }catch (Exception exc){
 
                         }
@@ -408,7 +432,7 @@ public class DataAccessHandler <T> {
                     mgradingrepository.setFruitType(cursor.getInt(cursor.getColumnIndex("FruitType")));
                     mgradingrepository.setGrossWeight(cursor.getDouble(cursor.getColumnIndex("GrossWeight")));
                     mgradingrepository.setFileName(cursor.getString(cursor.getColumnIndex("FileName")));
-                    mgradingrepository.setFileLocation(cursor.getString(cursor.getColumnIndex("FileLocation")));
+                    //mgradingrepository.setFileLocation(cursor.getString(cursor.getColumnIndex("FileLocation")));
                     mgradingrepository.setFileExtension(cursor.getString(cursor.getColumnIndex("FileExtension")));
                     mgradingrepository.setCreatedByUserId(cursor.getInt(cursor.getColumnIndex("CreatedByUserId")));
                     mgradingrepository.setCreatedDate(cursor.getString(cursor.getColumnIndex("CreatedDate")));

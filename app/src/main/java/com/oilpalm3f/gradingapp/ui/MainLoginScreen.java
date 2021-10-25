@@ -149,7 +149,7 @@ public class MainLoginScreen extends AppCompatActivity {
             }
         });
 
-        transactionSync();
+       // transactionSync();
 
     }
 
