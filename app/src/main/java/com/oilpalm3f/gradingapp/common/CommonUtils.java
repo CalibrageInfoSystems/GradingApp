@@ -71,13 +71,31 @@ public class CommonUtils {
 
     //To check is network available
     public static boolean isNetworkAvailable(final Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (null != connectivityManager) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+//        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        if (null != connectivityManager) {
+//            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+//            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+//        }
+//
+//        return false;
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+
+            Log.d(CommonUtils.class.getSimpleName(),"---> IS NET AVAILABLE  :"+exitValue);
+            return (exitValue == 0);
         }
+        catch (IOException e)          {
+            Log.d(CommonUtils.class.getSimpleName(),"---> IS NET AVAILABLE error :"+e.getLocalizedMessage());
+            e.printStackTrace(); }
+        catch (InterruptedException e) {
+            Log.d(CommonUtils.class.getSimpleName(),"---> IS NET AVAILABLE error :"+e.getLocalizedMessage());
+            e.printStackTrace(); }
 
         return false;
+
     }
 
     //Hides Keyboard
@@ -165,8 +183,8 @@ public class CommonUtils {
             deviceId = mTelephony.getDeviceId();
         }
 
-       // return deviceId;
-       return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
+        return deviceId;
+      // return "351558072434071";  //d04766fdfdd6b987 //tab 022 //Stamp Id
        // return "3d67d4a83a85f9e6";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";
         //return "358525086759978";
@@ -267,8 +285,12 @@ public class CommonUtils {
             String dataDir = context.getApplicationInfo().dataDir;
 
             final String dbfile = "/sdcard/3f_" + CommonConstants.TAB_ID + "_" + System.nanoTime();
+            Log.e(LOG_TAG,"============>dbfile"+ dbfile);
 
             File dir = new File(dataDir + "/databases");
+            Log.e(LOG_TAG,"============>dbfiless"+ dir.length());
+            Log.e(LOG_TAG,"============>dbfiless1111"+ dir.exists());
+
             for (File file : dir.listFiles()) {
                 if (file.isFile() && file.getName().equals("3foilpalm.sqlite")) {
                     try {

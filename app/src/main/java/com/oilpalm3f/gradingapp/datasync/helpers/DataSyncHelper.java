@@ -1,5 +1,6 @@
 package com.oilpalm3f.gradingapp.datasync.helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -198,6 +199,7 @@ public class DataSyncHelper {
             CloudDataHandler.placeDataInCloudd(context, transObj, Config.live_url + Config.transactionSyncURL, new ApplicationThread.OnComplete<String>() {
                 @Override
                 public void execute(boolean success, String result, String msg) {
+
                     if (success) {
                         dataAccessHandler.executeRawQuery(String.format(Queries.getInstance().updateServerUpdatedStatus(), tableName));
                         Log.v(LOG_TAG, "@@@ Transactions sync success for " + tableName);
@@ -216,6 +218,7 @@ public class DataSyncHelper {
                             public void run() {
                                 ProgressBar.hideProgressBar();
                                 UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
+                                ((Activity)context).finish();
                             }
                         });
                         transactionsCheck++;

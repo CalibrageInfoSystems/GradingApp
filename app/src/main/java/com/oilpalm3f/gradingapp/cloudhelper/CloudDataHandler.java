@@ -47,6 +47,7 @@ public class CloudDataHandler {
                 });
             } catch (Exception e) {
                 android.util.Log.v(LOG_TAG, "@Error while getting " + e.getMessage());
+                onComplete.execute(false, "Network Error", e.getMessage());
             }
         });
 
