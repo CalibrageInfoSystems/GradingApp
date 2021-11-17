@@ -126,6 +126,7 @@ public class RefreshSyncActivity extends AppCompatActivity {
                                         bindData();
 //                                        Toasty.success(RefreshSyncActivity.this,"Successfully data sent to server",10).show();
                                         if (isDataUpdated) {
+                                            CommonConstants.IsLogin = false;
                                             UiUtils.showCustomToastMessage("Successfully data sent to server", RefreshSyncActivity.this, 0);
                                             ProgressBar.hideProgressBar();
                                             btnsend.setVisibility(View.VISIBLE);

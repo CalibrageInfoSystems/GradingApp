@@ -162,202 +162,232 @@ public class HttpClient {
         }
     }
 
-    public static synchronized void  postDataToServerjsonn(final Context context, final String url, final JSONArray jsonObject, final ApplicationThread.OnComplete onComplete) {
-        // check the connectivity mode
-        int signalSupport = 0;
-        String signalSupportString = "";
+//    public static synchronized void  postDataToServerjsonn(final Context context, final String url, final JSONArray jsonObject, final ApplicationThread.OnComplete onComplete) {
+//        // check the connectivity mode
+//        int signalSupport = 0;
+//        String signalSupportString = "";
+//
+//        if (offline) {
+//            if (null != onComplete) onComplete.execute(false, null, "not connected");
+//            return;
+//        }
+//        Log.i("Jurl...", url);
+//        Palm3FoilDatabase  palm3FoilDatabase = Palm3FoilDatabase.getPalm3FoilDatabase(context);
+//
+//        boolean wifiAvailable = false;
+//        boolean mobileAvailable = false;
+//        ConnectivityManager conManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo[] networkInfo = conManager.getAllNetworkInfo();
+//        for (NetworkInfo netInfo : networkInfo) {
+//            if (netInfo.getTypeName().equalsIgnoreCase("WIFI"))
+//                if (netInfo.isConnected())
+//                    wifiAvailable = true;
+//            if (netInfo.getTypeName().equalsIgnoreCase("MOBILE"))
+//                if (netInfo.isConnected())
+//                    mobileAvailable = true;
+//        }
+//
+//        Log.d("wifiAvailable", wifiAvailable + "");
+//        Log.d("mobileAvailable", mobileAvailable + "");
+//
+//
+//        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+//
+//        HttpConnectionParams.setConnectionTimeout(client.getParams(), 3000);
+//        HttpConnectionParams.setSoTimeout(client.getParams(), 3000);
+//
+//        final HttpPost post = new HttpPost(url);
+//
+//        if (mobileAvailable == true){
+//
+//            TelephonyManager telephonyManager =        (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+//            CellInfoLte cellinfogsm = (CellInfoLte)telephonyManager.getAllCellInfo().get(0);
+//            CellSignalStrengthLte cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
+//            cellSignalStrengthGsm.getDbm();
+//            signalSupport = cellSignalStrengthGsm.getDbm();
+//
+//
+//            Log.d("cellSignalStrengthGsm", cellSignalStrengthGsm.getDbm() + "");
+//            Log.d("cellSignalStrengthGsmm", cellinfogsm.getCellSignalStrength() + "");
+//
+//            signalSupportString = String.valueOf(signalSupport);
+//
+//            Log.d("signalSupport", "Signal Strength is" +signalSupport + "");
+//            Log.d("signalSupportString", signalSupportString + "");
+//
+//            if (signalSupport <= -50 && signalSupport >= -89){
+//
+//                Log.d("Strengh", "whatisthestrength");
+//                try {
+//                    if( jsonObject != null) {
+//                        Log.i("Data...", "@@@ "+jsonObject.toString());
+//                        StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
+//                        //sets the post request as the resulting string
+//                        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+//                        post.setEntity(entity);
+//                        post.setHeader("Accept", "application/json");
+//                        post.setHeader("Content-type", "application/json");
+////                Log.i("Json Data to server", jsonObject.toString());
+//
+//
+//                        HttpClientParams.setRedirecting(client.getParams(), true);
+//
+//                        final HttpResponse response = client.execute(post);
+//                        final int statusCode = response.getStatusLine().getStatusCode();
+//
+//                        if (statusCode == HttpStatus.SC_OK) {
+//                            final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
+//                            Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
+//                            Log.v("@@postResponse",""+postResponse);
+//                            if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
+//                        }
+//                        else {
+//                            final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                            // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
+//                            Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
+//                            Log.pushLogToCrashlytics(postResponse);
+//                            Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
+//                            if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
+//                        }
+//                    }
+//
+//                    //client.getConnectionManager().shutdown();
+//                    // enable redirects
+//
+//                } catch(Exception e) {
+//
+//                    e.printStackTrace();
+//                    Log.e(HttpClient.class.getName(), e);
+//                    post.abort();
+//
+//                    if (null != onComplete) onComplete.execute(false, null, e.getMessage());
+//                    UiUtils.showCustomToastMessage("Network Error", context, 1);
+//                } finally {
+//                    client.close();
+//                }
+//
+//            }else{
+//                if (null != onComplete) onComplete.execute(false, null, "Network Error");
+//                UiUtils.showCustomToastMessage("Network Error", context, 1);
+//            }
+//
+//        }else{
+//            try {
+//                if( jsonObject != null) {
+//                    Log.i("Data...", "@@@ "+jsonObject.toString());
+//                    StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
+//                    //sets the post request as the resulting string
+//                    entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+//                    post.setEntity(entity);
+//                    post.setHeader("Accept", "application/json");
+//                    post.setHeader("Content-type", "application/json");
+////                Log.i("Json Data to server", jsonObject.toString());
+//
+//
+//                    HttpClientParams.setRedirecting(client.getParams(), true);
+//
+//                    final HttpResponse response = client.execute(post);
+//                    final int statusCode = response.getStatusLine().getStatusCode();
+//
+//                    if (statusCode == HttpStatus.SC_OK) {
+//                        final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
+//                        Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
+//                        Log.v("@@postResponse",""+postResponse);
+//                        if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
+//                    }
+//                    else {
+//                        final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                        // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
+//                        Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
+//                        Log.pushLogToCrashlytics(postResponse);
+//                        Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
+//                        if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
+//                    }
+//                }
+//
+//                //client.getConnectionManager().shutdown();
+//                // enable redirects
+//
+//            } catch(Exception e) {
+//
+//                e.printStackTrace();
+//                Log.e(HttpClient.class.getName(), e);
+//                post.abort();
+//
+//                UiUtils.showCustomToastMessage("Network Error", context, 1);
+//                if (null != onComplete) onComplete.execute(false, null, e.getMessage());
+//            } finally {
+//                client.close();
+//            }
+//
+//        }
+//
+//    }
 
+    public static synchronized void  postDataToServerjsonn(final Context context, final String url, final JSONArray jsonObject, final ApplicationThread.OnComplete onComplete) {
+
+        // check the connectivity mode
         if (offline) {
             if (null != onComplete) onComplete.execute(false, null, "not connected");
             return;
         }
         Log.i("Jurl...", url);
-        Palm3FoilDatabase  palm3FoilDatabase = Palm3FoilDatabase.getPalm3FoilDatabase(context);
-
-        TelephonyManager telephonyManager =        (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        CellInfoLte cellinfogsm = (CellInfoLte)telephonyManager.getAllCellInfo().get(0);
-        CellSignalStrengthLte cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
-        cellSignalStrengthGsm.getDbm();
-        signalSupport = cellSignalStrengthGsm.getDbm();
-
-        boolean wifiAvailable = false;
-        boolean mobileAvailable = false;
-        ConnectivityManager conManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = conManager.getAllNetworkInfo();
-        for (NetworkInfo netInfo : networkInfo) {
-            if (netInfo.getTypeName().equalsIgnoreCase("WIFI"))
-                if (netInfo.isConnected())
-                    wifiAvailable = true;
-            if (netInfo.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (netInfo.isConnected())
-                    mobileAvailable = true;
-        }
-
-        Log.d("wifiAvailable", wifiAvailable + "");
-        Log.d("mobileAvailable", mobileAvailable + "");
-
-        Log.d("cellSignalStrengthGsm", cellSignalStrengthGsm.getDbm() + "");
-        Log.d("cellSignalStrengthGsmm", cellinfogsm.getCellSignalStrength() + "");
 
         final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-
-        //client.getConnectionManager().closeIdleConnections(1000,TimeUnit.MILLISECONDS);
-        //client.getConnectionManager().closeExpiredConnections();
-
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 3000);
-        HttpConnectionParams.setSoTimeout(client.getParams(), 3000);
+        HttpConnectionParams.setSoTimeout(client.getParams(), 8000);
+        final HttpPost post = new HttpPost(url);
+        try {
+            // Not running on main thread so can use AndroidHttpClient.newInstance
 
-        // ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        ConnectivityManager cm =
-//                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        boolean isMetered = cm.isActiveNetworkMetered();
-//        Log.d("isMetered", isMetered + "");
-
-//        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-//        NetworkInfo.DetailedState detailedState = info.getDetailedState();
-//
-//            Log.d("detailedState", detailedState + "");
-//
-//
-//        if(detailedState == NetworkInfo.DetailedState.CONNECTING){
-//            Log.d("NetworkDetailStateCONNECTING", detailedState + "");
-//        }
-//
-//        if(detailedState == NetworkInfo.DetailedState.IDLE){
-//            Log.d("NetworkDetailStateIDLE", detailedState + "");
-//        }
-//
-//        if(detailedState == NetworkInfo.DetailedState.VERIFYING_POOR_LINK){
-//           Log.d("NetworkDetailState", detailedState + "");
-//        }
-//
-//
-//        if(detailedState == NetworkInfo.DetailedState.DISCONNECTED){
-//            Log.d("NetworkDetailStateDISCONNECTED", detailedState + "");
-//        }
-//
-//        if(detailedState == NetworkInfo.DetailedState.DISCONNECTING){
-//            Log.d("NetworkDetailStateDISCONNECTING", detailedState + "");
-//        }
-        final HttpPost post = new org.apache.http.client.methods.HttpPost(url);
-
-//        boolean isFastConnection = Connectivity.isConnectedFast(context);
-//        Log.d("isFastConnection", isFastConnection + "");
-
-        if (mobileAvailable == true){
-
-            signalSupportString = String.valueOf(signalSupport);
-
-            Log.d("signalSupport", "Signal Strength is" +signalSupport + "");
-            Log.d("signalSupportString", signalSupportString + "");
-
-            if (signalSupport <= -50 && signalSupport >= -89){
-
-                Log.d("Strengh", "whatisthestrength");
-                try {
-                    if( jsonObject != null) {
-                        Log.i("Data...", "@@@ "+jsonObject.toString());
-                        StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
-                        //sets the post request as the resulting string
-                        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                        post.setEntity(entity);
-                        post.setHeader("Accept", "application/json");
-                        post.setHeader("Content-type", "application/json");
+            if( jsonObject != null) {
+                Log.i("Data...", "@@@ "+jsonObject.toString());
+                StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
+                //sets the post request as the resulting string
+                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                post.setEntity(entity);
+                post.setHeader("Accept", "application/json");
+                post.setHeader("Content-type", "application/json");
 //                Log.i("Json Data to server", jsonObject.toString());
 
+                HttpClientParams.setRedirecting(client.getParams(), true);
 
-                        HttpClientParams.setRedirecting(client.getParams(), true);
+                final HttpResponse response = client.execute(post);
 
-                        final HttpResponse response = client.execute(post);
-                        final int statusCode = response.getStatusLine().getStatusCode();
+                final int statusCode = response.getStatusLine().getStatusCode();
 
-                        if (statusCode == HttpStatus.SC_OK) {
-                            final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
-                            Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
-                            Log.v("@@postResponse",""+postResponse);
-                            if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
-                        }
-                        else {
-                            final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
-                            // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
-                            Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
-                            Log.pushLogToCrashlytics(postResponse);
-                            Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
-                            if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
-                        }
-                    }
-
-                    //client.getConnectionManager().shutdown();
-                    // enable redirects
-
-                } catch(Exception e) {
-
-                    e.printStackTrace();
-                    Log.e(HttpClient.class.getName(), e);
-                    post.abort();
-
-                    if (null != onComplete) onComplete.execute(false, null, e.getMessage());
-                    UiUtils.showCustomToastMessage("Network Error", context, 1);
-                } finally {
-                    client.close();
+                if (statusCode == HttpStatus.SC_OK) {
+                    final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+                    Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
+                    Log.pushLogToCrashlytics(postResponse);
+                    Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
+                    Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
+                    if (null != onComplete) onComplete.execute(true, postResponse, null);
+                } else {
+                    final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+                    Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
+                    Log.pushLogToCrashlytics(postResponse);
+                    Log.pushExceptionToCrashlytics(new OilPalmException(jsonObject.toString()+"\n"+postResponse));
+                    Log.d(HttpClient.class.getName(), "\n\npost response failed: \n" + postResponse);
+                    if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
                 }
 
-            }else{
-                if (null != onComplete) onComplete.execute(false, null, "Network Error");
-                UiUtils.showCustomToastMessage("Network Error", context, 1);
+            }
+            else {
+                if (null != onComplete) onComplete.execute(false, "Empty Data set", "Empty Data set");
             }
 
-        }else{
-            try {
-                if( jsonObject != null) {
-                    Log.i("Data...", "@@@ "+jsonObject.toString());
-                    StringEntity entity = new StringEntity(jsonObject.toString(), "UTF-8");
-                    //sets the post request as the resulting string
-                    entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                    post.setEntity(entity);
-                    post.setHeader("Accept", "application/json");
-                    post.setHeader("Content-type", "application/json");
-//                Log.i("Json Data to server", jsonObject.toString());
+        } catch(Exception e) {
+            e.printStackTrace();
+            Log.e(HttpClient.class.getName(), e);
+            post.abort();
 
-
-                    HttpClientParams.setRedirecting(client.getParams(), true);
-
-                    final HttpResponse response = client.execute(post);
-                    final int statusCode = response.getStatusLine().getStatusCode();
-
-                    if (statusCode == HttpStatus.SC_OK) {
-                        final String postResponse = org.apache.http.util.EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d(HttpClient.class.getName(), "\n\npost response: \n" + postResponse);
-                        Log.v("@@postResponse",""+postResponse);
-                        if (null != onComplete) onComplete.execute(true, postResponse, postResponse);
-                    }
-                    else {
-                        final String postResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        // palm3FoilDatabase.insertErrorLogs(CommonConstants.SyncTableName,postResponse);
-                        Log.pushLogToCrashlytics(url+"\n"+jsonObject.toString());
-                        Log.pushLogToCrashlytics(postResponse);
-                        Log.pushExceptionToCrashlytics(new OilPalmException(postResponse));
-                        if (null != onComplete) onComplete.execute(false, postResponse, postResponse);
-                    }
-                }
-
-                //client.getConnectionManager().shutdown();
-                // enable redirects
-
-            } catch(Exception e) {
-
-                e.printStackTrace();
-                Log.e(HttpClient.class.getName(), e);
-                post.abort();
-
-                if (null != onComplete) onComplete.execute(false, null, e.getMessage());
-            } finally {
-                client.close();
-            }
-
+            if (null != onComplete) onComplete.execute(false, null, e.getMessage());
+        } finally {
+            client.close();
         }
-
     }
+
 
     public static void post(String url, Map<String, Object> values,
                             ApplicationThread.OnComplete<String> onComplete) {

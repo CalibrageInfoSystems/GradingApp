@@ -226,6 +226,7 @@ public class MainLoginScreen extends AppCompatActivity {
 
     //perform transaction sync
     public void transactionSync(){
+        CommonConstants.IsLogin = true;
         if (CommonUtils.isNetworkAvailable(MainLoginScreen.this)) {
             DataSyncHelper.performRefreshTransactionsSync(MainLoginScreen.this, new ApplicationThread.OnComplete() {
                 @Override

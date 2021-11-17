@@ -15,6 +15,7 @@ public class CommonConstants {
     public static String USER_ID = "1";
     public static String TAB_ID = "0000";
     public static String USER_CODE = "SA001";
+    public static Boolean IsLogin = false;
 
 
     public static String PrinterName="";

@@ -377,7 +377,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         if (!pictureDirectory.exists()) {
             pictureDirectory.mkdirs();
         }
-        finalFile = new File(pictureDirectory, Calendar.getInstance().getTimeInMillis() + CommonConstants.JPEG_FILE_SUFFIX);
+        finalFile = new File(pictureDirectory, splitString[0]+splitString[1]+splitString[2]+splitString[3]+CommonConstants.JPEG_FILE_SUFFIX);
         return finalFile;
     }
 
@@ -444,6 +444,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
 
         if (TextUtils.isEmpty(mCurrentPhotoPath)) {
             UiUtils.showCustomToastMessage("Please Take Grading Image", GradingActivity.this, 0);
+            return false;
+        }
+
+        if (currentBitmap == null) {
+            UiUtils.showCustomToastMessage("Please Capture Grading Image", GradingActivity.this, 0);
             return false;
         }
 
@@ -527,7 +532,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         /* Decode the JPEG file into a Bitmap */
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bytes);
         bitmap = ImageUtility.rotatePicture(90, bitmap);
 
         currentBitmap = bitmap;
@@ -1025,6 +1030,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                                     ApplicationThread.uiPost(LOG_TAG, "transactions sync message", new Runnable() {
                                         @Override
                                         public void run() {
+                                            CommonConstants.IsLogin = false;
                                             UiUtils.showCustomToastMessage("Successfully data sent to server", GradingActivity.this, 0);
                                             startActivity(new Intent(GradingActivity.this, MainActivity.class));
                                         }

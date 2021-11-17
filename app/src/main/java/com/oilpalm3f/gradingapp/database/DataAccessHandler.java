@@ -404,28 +404,28 @@ public class DataAccessHandler <T> {
 
                     String filelocation = cursor.getString(cursor.getColumnIndex("FileLocation"));
 
-//                    File imagefile = new File(filelocation);
-//                    FileInputStream fis = null;
-//                    try {
-//                        fis = new FileInputStream(imagefile);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    Bitmap bm = BitmapFactory.decodeStream(fis);
-//                    bm = ImageUtility.rotatePicture(90, bm);
-//                    String base64string = ImageUtility.convertBitmapToString(bm);
-//                    mgradingrepository.setImageString(base64string);
-
-
-                    if(filelocation != null){
-                        try{
-                            mgradingrepository.setImageString(CommonUtils.encodeFileToBase64Binary(new File(filelocation)));
-
-                        }catch (Exception exc){
-
-                        }
+                    File imagefile = new File(filelocation);
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream(imagefile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
+
+                    Bitmap bm = BitmapFactory.decodeStream(fis);
+                    bm = ImageUtility.rotatePicture(90, bm);
+                    String base64string = ImageUtility.convertBitmapToString(bm);
+                    mgradingrepository.setImageString(base64string);
+
+//
+//                    if(filelocation != null){
+//                        try{
+//                            mgradingrepository.setImageString(CommonUtils.encodeFileToBase64Binary(new File(filelocation)));
+//
+//                        }catch (Exception exc){
+//
+//                        }
+//                    }
 
                     mgradingrepository.setTokenNumber(cursor.getString(cursor.getColumnIndex("TokenNumber")));
                     mgradingrepository.setCCCode(cursor.getString(cursor.getColumnIndex("CCCode")));

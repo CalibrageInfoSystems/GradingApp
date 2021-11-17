@@ -19,6 +19,7 @@ import com.oilpalm3f.gradingapp.database.DataAccessHandler;
 import com.oilpalm3f.gradingapp.database.DatabaseKeys;
 import com.oilpalm3f.gradingapp.database.Queries;
 import com.oilpalm3f.gradingapp.dbmodels.GradingFileRepository;
+import com.oilpalm3f.gradingapp.ui.MainLoginScreen;
 import com.oilpalm3f.gradingapp.uihelper.ProgressBar;
 import com.oilpalm3f.gradingapp.utils.UiUtils;
 
@@ -53,6 +54,7 @@ public class DataSyncHelper {
     public static List<String> refreshtableNamesList = new ArrayList<>();
     public static LinkedHashMap<String, List> refreshtransactionsDataMap = new LinkedHashMap<>();
     private static String IMEINUMBER;
+    MainLoginScreen mainLoginScreen;
 
     //Performing Master Sync
     public static synchronized void performMasterSync(final Context context, final boolean firstTimeInsertFinished, final ApplicationThread.OnComplete onComplete) {
@@ -201,6 +203,7 @@ public class DataSyncHelper {
                 public void execute(boolean success, String result, String msg) {
 
                     if (success) {
+                        CommonConstants.IsLogin = false;
                         dataAccessHandler.executeRawQuery(String.format(Queries.getInstance().updateServerUpdatedStatus(), tableName));
                         Log.v(LOG_TAG, "@@@ Transactions sync success for " + tableName);
                         transactionsCheck++;
@@ -208,6 +211,7 @@ public class DataSyncHelper {
                             Log.v(LOG_TAG, "@@@ Done with transactions sync " + transactionsCheck);
                             ProgressBar.hideProgressBar();
                             onComplete.execute(true, null, "Sync is success");
+                            CommonConstants.IsLogin = false;
 
                         } else {
                             postTransactionsDataToCloud(context, refreshtableNamesList.get(transactionsCheck), dataAccessHandler, onComplete);
@@ -216,9 +220,17 @@ public class DataSyncHelper {
                         ApplicationThread.uiPost(LOG_TAG, "Sync is failed", new Runnable() {
                             @Override
                             public void run() {
-                                ProgressBar.hideProgressBar();
-                                UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
-                                ((Activity)context).finish();
+
+                               if (CommonConstants.IsLogin == true){
+                                   ProgressBar.hideProgressBar();
+                                   UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
+                                   CommonConstants.IsLogin = false;
+                               }else{
+                                   ProgressBar.hideProgressBar();
+                                   UiUtils.showCustomToastMessage("Sync failed for " + tableName, context, 1);
+                                   ((Activity)context).finish();
+                               }
+
                             }
                         });
                         transactionsCheck++;
