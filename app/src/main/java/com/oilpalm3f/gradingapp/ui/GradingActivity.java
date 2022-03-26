@@ -313,11 +313,11 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                 if (validate()){
 //                    enablePrintBtn(false);
 //                    submit.setAlpha(0.5f);
-                    FragmentManager fm = getSupportFragmentManager();
-                    PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
-                    printerChooserFragment.setPrinterType(GradingActivity.this);
-                    printerChooserFragment.show(fm, "bluetooth fragment");
-                   // saveGradingData();
+//                    FragmentManager fm = getSupportFragmentManager();
+//                    PrinterChooserFragment printerChooserFragment = new PrinterChooserFragment();
+//                    printerChooserFragment.setPrinterType(GradingActivity.this);
+//                    printerChooserFragment.show(fm, "bluetooth fragment");
+                    saveGradingData();
                 }
             }
         });
@@ -326,7 +326,9 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
     }
 
     private void dispatchTakePictureIntent(int actionCode) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent takePictureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+        //startActivity(takePictureIntent);
         switch(actionCode) {
             case CAMERA_REQUEST:
                 File f = null;
@@ -351,6 +353,7 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
                 break;
         }
         startActivityForResult(takePictureIntent, actionCode);
+        //startActivityForResult(takePictureIntent,-1);
     }
 
     //Set Imagepath
@@ -377,7 +380,8 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         if (!pictureDirectory.exists()) {
             pictureDirectory.mkdirs();
         }
-        finalFile = new File(pictureDirectory, splitString[0]+splitString[1]+splitString[2]+splitString[3]+CommonConstants.JPEG_FILE_SUFFIX);
+        finalFile = new File(pictureDirectory,splitString[0].trim()+splitString[1].trim()+splitString[2].trim()+splitString[3].trim()+CommonConstants.JPEG_FILE_SUFFIX);
+        //finalFile = new File(pictureDirectory,qrvalue.trim()+CommonConstants.JPEG_FILE_SUFFIX);
         return finalFile;
     }
 
@@ -466,17 +470,17 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
     }
 
     //Handling on Activity Result
-    @SuppressLint("MissingSuperCall")
+    //@SuppressLint("MissingSuperCall")
     @Override
-    public void onActivityResult ( int requestCode, int resultCode, Intent data){
+    public void onActivityResult ( int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CAMERA_REQUEST: {
                 if (resultCode == RESULT_OK) {
                     try {
 //                        UiUtils.decodeFile(mCurrentPhotoPath,finalFile);
                         handleBigCameraPhoto();
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -511,7 +515,6 @@ public class GradingActivity extends AppCompatActivity implements BluetoothDevic
         /* Get the size of the image */
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-       ;
 
 
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);

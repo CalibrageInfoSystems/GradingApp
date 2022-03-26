@@ -18,16 +18,16 @@
             android:layout_height="match_parent">
         <ImageView
             android:id="@+id/printBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:scaleType="fitXY"
             android:src="@drawable/printer_1" />
 
             <ImageView
                 android:id="@+id/viewimage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/printBtn"
                 android:layout_marginStart="10dp"
@@ -103,7 +103,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:layout_height="wrap_content"
-                        android:text="CCCode"
+                        android:text="CC Code"
                         android:textColor="@color/text_dark_gray" />
 
 

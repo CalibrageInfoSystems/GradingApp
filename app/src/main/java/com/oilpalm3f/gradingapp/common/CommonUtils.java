@@ -183,8 +183,8 @@ public class CommonUtils {
             deviceId = mTelephony.getDeviceId();
         }
 
-        return deviceId;
-       //return "351558072434071";  //myid
+        //return deviceId;
+       return "351558072434071";  //myid
        // return "3d67d4a83a85f9e6";  //d04766fdfdd6b987 //tab 022 //StampId
         //return "358525086163783";
         //return "358525086759978";
